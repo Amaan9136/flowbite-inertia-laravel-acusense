@@ -6,6 +6,7 @@
         "build": "vite build && vite build --ssr",
         "dev": "vite",
         "lint": "eslint resources/js --ext .js,.jsx --ignore-path .gitignore --fix",
+        "php:dev": "composer run dev",
         "php:migrate": "php artisan migrate",
         "php:key": "php artisan key:generate"
     },
