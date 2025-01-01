@@ -88,3 +88,15 @@ npm run php:migrate
 ```
 npm run dev
 ```
+
+---
+vite renders js codes and sends it to laravel
+so we need to run vite (only renders jsx)
+```
+npm run dev
+```
+
+actual output will be laravel
+```
+php artisan serve
+```
