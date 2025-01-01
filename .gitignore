@@ -1,8 +1,5 @@
 /.phpunit.cache
-<<<<<<< HEAD
-=======
 /bootstrap/ssr
->>>>>>> b7fef03 (chore: nothing much)
 /node_modules
 /public/build
 /public/hot
@@ -25,3 +22,4 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+composer*

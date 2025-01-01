@@ -11,14 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-<<<<<<< HEAD
-=======
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
-
->>>>>>> b7fef03 (chore: nothing much)
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
