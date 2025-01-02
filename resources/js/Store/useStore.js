@@ -1,15 +1,22 @@
 import { create } from 'zustand';
 
+window.addEventListener('storage', () => {
+  const isDarkMode = JSON.parse(localStorage.getItem('isDarkMode'));
+  if (isDarkMode !== null) {
+    document.documentElement.classList.toggle('dark', isDarkMode);
+  }
+});
+
 const useStore = create((set) => ({
-  isDarkMode: false, 
+  isDarkMode: JSON.parse(localStorage.getItem('isDarkMode')) || false,
+
   toggleTheme: () => {
     set((state) => {
       const newDarkMode = !state.isDarkMode;
-      if (newDarkMode) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      document.documentElement.classList.toggle('dark', newDarkMode);
+      
+      localStorage.setItem('isDarkMode', JSON.stringify(newDarkMode));
+
       return { isDarkMode: newDarkMode };
     });
   },

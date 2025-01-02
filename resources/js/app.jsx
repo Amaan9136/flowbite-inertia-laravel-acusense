@@ -6,12 +6,30 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-if (isDarkMode) {
-    document.documentElement.classList.add('dark');
-} else {
-    document.documentElement.classList.remove('dark');
-}
+
+const applyTheme = () => {
+    const savedTheme = localStorage.getItem('isDarkMode');
+    const isDarkMode =
+        savedTheme !== null
+            ? JSON.parse(savedTheme) 
+            : window.matchMedia('(prefers-color-scheme: dark)').matches; 
+
+    if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+};
+
+applyTheme();
+
+window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', (e) => {
+        const isDarkMode = e.matches;
+        localStorage.setItem('isDarkMode', isDarkMode);
+        applyTheme();
+    });
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
