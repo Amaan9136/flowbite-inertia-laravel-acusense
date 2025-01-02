@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+body {
+  transition: background-color 0.3s ease;
+  background-color: white;
+}
+
+.dark body {
+  background-color: black;
+}
+
+
+/* OVERRIDING BELOW CLASSES WONT WORK, NEED TO FIX */
+
+.cursor-pointer {
+  transition: all 0.5s;
+}
+
+.cursor-pointer:hover {
+  opacity: 0.2;
+}
