@@ -3,7 +3,10 @@
     "type": "module",
     "scripts": {
         "build": "vite build && vite build --ssr",
-        "dev": "vite"
+        "dev": "vite",
+        "php:migrate": "php artisan migrate",
+        "php:dev": "composer run dev",
+        "php:key": "php artisan key:generate"
     },
     "devDependencies": {
         "@headlessui/react": "^2.0.0",
