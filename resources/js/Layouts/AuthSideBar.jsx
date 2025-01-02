@@ -6,7 +6,7 @@ const AuthSideBar = () => {
     <nav className="flex flex-col w-56 bg-gray-50 text-black/60 dark:bg-gray-900 dark:text-white/60 space-y-1 shadow-md p-2 hidden sm:block h-full">
       {NeedAuthPageData.map((element, index) => {
         const isActive = route().current(element.path.replace("/", ""));
-        return (
+        return ( 
           <Link
             key={index}
             href={element.path}
