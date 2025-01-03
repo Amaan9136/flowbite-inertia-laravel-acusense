@@ -5,6 +5,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
+use App\Models\Product;
+
+use function PHPSTORM_META\map;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -16,7 +19,14 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $products = Product::all()->toArray();
+    $parsed_prducts = array_map(function($p) {
+        return [
+            ...$p,
+            "specs" => json_decode($p['specs'])
+        ];
+    }, $products);
+    return Inertia::render('Dashboard', ["products" => $parsed_prducts]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/contact', function () {

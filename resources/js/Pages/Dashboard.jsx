@@ -11,8 +11,8 @@ import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
-export default function Dashboard() {
-  const { products, addProduct, removeProduct } = useProductStore(); // Assuming removeProduct exists in the store
+export default function Dashboard({ products }) {
+  const { addProduct, removeProduct } = useProductStore(); // Assuming removeProduct exists in the store
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
