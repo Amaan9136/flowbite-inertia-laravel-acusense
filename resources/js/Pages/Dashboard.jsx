@@ -1,92 +1,193 @@
+import DangerButton from "@/Components/DangerButton";
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import ProductCard from "@/Components/ProductCard";
+import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import useProductStore from "@/Store/useProductStore";
 import { Head } from "@inertiajs/react";
-import { AiOutlinePlusCircle } from "react-icons/ai";
+import { useState } from "react";
+import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
 export default function Dashboard() {
+  const { products, addProduct, removeProduct } = useProductStore(); // Assuming removeProduct exists in the store
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    image: "",
+    price: "",
+    specs: "",
+  });
+  const [deleteName, setDeleteName] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleDeleteInputChange = (e) => {
+    setDeleteName(e.target.value);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name) newErrors.name = "Product name is required.";
+    if (!formData.price) newErrors.price = "Price is required.";
+    if (!formData.specs) newErrors.specs = "Specifications are required.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const submitAdd = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const newProduct = {
+      ...formData,
+      price: parseFloat(formData.price),
+      specs: formData.specs.split(",").map((spec) => spec.trim()),
+    };
+
+    addProduct(newProduct);
+    setFormData({ name: "", image: "", price: "", specs: "" });
+    setErrors({});
+    setShowAddModal(false);
+  };
+
+  const submitDelete = (e) => {
+    e.preventDefault();
+
+    const productToDelete = products.find((product) => product.name === deleteName);
+    if (!productToDelete) {
+      setErrors({ deleteName: "Product not found." });
+      return;
+    }
+
+    removeProduct(productToDelete.name);
+    setDeleteName("");
+    setErrors({});
+    setShowDeleteModal(false);
+  };
+
   return (
     <AuthenticatedLayout header="Dashboard">
       <Head title="Dashboard" />
 
       <div className="Page-Content">
         <div className="tools pt-8 sm:pl-4">
-          <PrimaryButton className="ms-4 flex items-center space-x-2">
-            <AiOutlinePlusCircle className="text-xl" />
-            <span>Add New Product</span>
-          </PrimaryButton>
+          <div className="flex">
+            <PrimaryButton
+              className="ms-4 flex items-center space-x-2"
+              onClick={() => setShowAddModal(true)}
+            >
+              <AiOutlinePlusCircle className="text-xl" />
+              <span>Add New Product</span>
+            </PrimaryButton>
+            <DangerButton
+              className="ms-4 flex items-center space-x-2"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              <AiOutlineMinusCircle className="text-xl" />
+              <span>Delete Product</span>
+            </DangerButton>
+          </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-2 sm:p-4 xl:p-8">
-          {products.map((p, i) => (
-            <ProductCard key={i} {...p} />
+          {products.map((product, index) => (
+            <ProductCard key={index} {...product} />
           ))}
         </div>
       </div>
+
+      {/* Add Product Modal */}
+      <Modal show={showAddModal} onClose={() => setShowAddModal(false)}>
+        <form onSubmit={submitAdd} className="p-6 space-y-4">
+          <div>
+            <InputLabel htmlFor="name" value="Product Name" />
+            <TextInput
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="mt-1 block w-full text-gray-900"
+            />
+            <InputError message={errors.name} />
+          </div>
+
+          <div>
+            <InputLabel htmlFor="image" value="Product Image URL (optional)" />
+            <TextInput
+              id="image"
+              name="image"
+              type="url"
+              value={formData.image}
+              onChange={handleInputChange}
+              className="mt-1 block w-full text-gray-900"
+            />
+            <InputError message={errors.image} />
+          </div>
+
+          <div>
+            <InputLabel htmlFor="price" value="Price" />
+            <TextInput
+              id="price"
+              name="price"
+              type="number"
+              value={formData.price}
+              onChange={handleInputChange}
+              className="mt-1 block w-full text-gray-900"
+            />
+            <InputError message={errors.price} />
+          </div>
+
+          <div>
+            <InputLabel htmlFor="specs" value="Specifications (comma-separated)" />
+            <TextInput
+              id="specs"
+              name="specs"
+              type="text"
+              value={formData.specs}
+              onChange={handleInputChange}
+              className="mt-1 block w-full text-gray-900"
+            />
+            <InputError message={errors.specs} />
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <PrimaryButton type="submit">Add Product</PrimaryButton>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Product Modal */}
+      <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+        <form onSubmit={submitDelete} className="p-6 space-y-4">
+          <div>
+            <InputLabel htmlFor="deleteName" value="Product Name to Delete" />
+            <TextInput
+              id="deleteName"
+              name="deleteName"
+              type="text"
+              value={deleteName}
+              onChange={handleDeleteInputChange}
+              className="mt-1 block w-full text-gray-900"
+            />
+            <InputError message={errors.deleteName} />
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <DangerButton type="submit">Delete Product</DangerButton>
+          </div>
+        </form>
+      </Modal>
     </AuthenticatedLayout>
   );
 }
-
-const products = [
-  {
-    name: "Hikvision DS-2CD2143G0-I",
-    image:
-      "https://tse4.mm.bing.net/th?id=OIP.Gn_xCJ2p6fvzPBZI2LXdEgHaFj&pid=Api",
-    price: 5999,
-    specs: [
-      "4 MP",
-      "Infrared Night Vision",
-      "Weatherproof",
-      "Wide Dynamic Range",
-    ],
-  },
-  {
-    name: "Dahua IPC-HFW1431S",
-    image:
-      "https://tse1.mm.bing.net/th?id=OIP.x7qenAWmOYZJwkxG2PJuCgHaGT&pid=Api",
-    price: 6899,
-    specs: [
-      "4 MP",
-      "30m IR Distance",
-      "Smart Motion Detection",
-      "H.265 Compression",
-    ],
-  },
-  {
-    name: "TP-Link Tapo C200",
-    image:
-      "https://tse2.mm.bing.net/th?id=OIP._SEGUu7a8p8NUUonk4G5DAHaFc&pid=Api",
-    price: 2499,
-    specs: ["Full HD", "Pan/Tilt", "Two-Way Audio", "Motion Detection"],
-  },
-  {
-    name: "CP PLUS CP-UNC-T41L3",
-    image:
-      "https://tse2.mm.bing.net/th?id=OIP.tNvLaVgZVXOMYu_po5tCrAHaE8&pid=Api",
-    price: 7999,
-    specs: ["4 MP", "30m IR Range", "PoE Support", "ONVIF Compatible"],
-  },
-  {
-    name: "Zmodo Outdoor Wireless Camera",
-    image:
-      "https://tse1.mm.bing.net/th?id=OIP.Gn_xCJ2p6fvzPBZI2LXdEgHaFj&pid=Api",
-    price: 4599,
-    specs: [
-      "720p HD",
-      "Wi-Fi Connectivity",
-      "Motion Alerts",
-      "Weatherproof Design",
-    ],
-  },
-  {
-    name: "Reolink Argus 2",
-    image:
-      "https://tse2.mm.bing.net/th?id=OIP.tNvLaVgZVXOMYu_po5tCrAHaE8&pid=Api",
-    price: 8999,
-    specs: [
-      "1080p Full HD",
-      "Solar Powered",
-      "Two-Way Audio",
-      "Starlight Night Vision",
-    ],
-  },
-];

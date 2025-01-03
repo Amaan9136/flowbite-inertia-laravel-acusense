@@ -1,7 +1,7 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import useStore from '@/Store/useStore';
+import useStore from '@/Store/useThemeStore';
 import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';

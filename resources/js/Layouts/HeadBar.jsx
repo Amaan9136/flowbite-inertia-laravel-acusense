@@ -1,4 +1,4 @@
-import useStore from "@/Store/useStore";
+import useStore from "@/Store/useThemeStore";
 import { Link } from "@inertiajs/react";
 import { motion } from 'framer-motion';
 import { FaMoon, FaSun } from 'react-icons/fa';
