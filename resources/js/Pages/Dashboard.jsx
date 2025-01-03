@@ -7,31 +7,24 @@ import ProductCard from "@/Components/ProductCard";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import useProductStore from "@/Store/useProductStore";
-import { Head } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
-import { router } from "@inertiajs/react";
 
 export default function Dashboard() {
   const { products, addProduct, removeProduct } = useProductStore(); // Assuming removeProduct exists in the store
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [formData, setFormData] = useState({
+
+  const { data, setData, post, reset } = useForm({
     name: "",
     image: "",
     price: "",
-    specs: "",
+    specs: [],
   });
+
   const [deleteName, setDeleteName] = useState("");
   const [errors, setErrors] = useState({});
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
 
   const handleDeleteInputChange = (e) => {
     setDeleteName(e.target.value);
@@ -39,35 +32,22 @@ export default function Dashboard() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = "Product name is required.";
-    if (!formData.price) newErrors.price = "Price is required.";
-    if (!formData.specs) newErrors.specs = "Specifications are required.";
+    if (!data.name) newErrors.name = "Product name is required.";
+    if (!data.price) newErrors.price = "Price is required.";
+    if (!data.specs) newErrors.specs = "Specifications are required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const submitAdd = (e) => {
+  const addItem = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    const newProduct = {
-      ...formData,
-      price: parseFloat(formData.price),
-      specs: formData.specs.split(",").map((spec) => spec.trim()),
-    };
-
-    router.post("/products", newProduct, {
+    post("/products", {
       async: true,
-      onSuccess: (res) => {
-        console.log({ res });
-        alert("Successfull!");
-        addProduct(newProduct);
-      },
+      onSuccess: () => reset(),
+      onFinish: () => setShowAddModal(false),
     });
-
-    setFormData({ name: "", image: "", price: "", specs: "" });
-    setErrors({});
-    setShowAddModal(false);
   };
 
   const submitDelete = (e) => {
@@ -119,15 +99,15 @@ export default function Dashboard() {
 
       {/* Add Product Modal */}
       <Modal show={showAddModal} onClose={() => setShowAddModal(false)}>
-        <form onSubmit={submitAdd} className="p-6 space-y-4">
+        <form onSubmit={addItem} className="p-6 space-y-4">
           <div>
             <InputLabel htmlFor="name" value="Product Name" />
             <TextInput
               id="name"
               name="name"
               type="text"
-              value={formData.name}
-              onChange={handleInputChange}
+              value={data.name}
+              onChange={(e) => setData("name", e.target.value)}
               className="mt-1 block w-full text-gray-900"
             />
             <InputError message={errors.name} />
@@ -139,8 +119,8 @@ export default function Dashboard() {
               id="image"
               name="image"
               type="url"
-              value={formData.image}
-              onChange={handleInputChange}
+              value={data.image}
+              onChange={(e) => setData("image", e.target.value)}
               className="mt-1 block w-full text-gray-900"
             />
             <InputError message={errors.image} />
@@ -152,8 +132,8 @@ export default function Dashboard() {
               id="price"
               name="price"
               type="number"
-              value={formData.price}
-              onChange={handleInputChange}
+              value={data.price}
+              onChange={(e) => parseFloat(setData("price", e.target.value))}
               className="mt-1 block w-full text-gray-900"
             />
             <InputError message={errors.price} />
@@ -168,8 +148,8 @@ export default function Dashboard() {
               id="specs"
               name="specs"
               type="text"
-              value={formData.specs}
-              onChange={handleInputChange}
+              value={data.specs.join(",")}
+              onChange={(e) => setData("specs", e.target.value.split(","))}
               className="mt-1 block w-full text-gray-900"
             />
             <InputError message={errors.specs} />

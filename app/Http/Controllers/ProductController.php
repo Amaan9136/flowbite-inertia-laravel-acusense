@@ -44,11 +44,7 @@ class ProductController extends Controller
         $new_product->save();
 
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Product created successfully!',
-            'data' => $new_product
-        ], 201);
+        return Redirect("/dashboard");
     }
 
     /**
