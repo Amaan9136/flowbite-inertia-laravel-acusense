@@ -35,6 +35,8 @@ Route::get('/contact', function () {
 
 Route::post('/api/products', [ProductController::class, 'store']);
 Route::delete('/api/products/{productId}', [ProductController::class, 'destroy']);
+Route::put('/api/products/{productId}', [ProductController::class, 'update']);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

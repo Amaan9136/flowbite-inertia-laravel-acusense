@@ -71,11 +71,40 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $productId)
     {
-        //
-    }
+        // Find the product by its ID
+        $product = Product::find($productId);
+    
+        if (!$product) {
+            // Inertia response with a not found message
+            return Inertia::render('Product/Show', [
+                'message' => 'Product not found',
+            ]);
+        }
+    
+        // Validate the request data
+        $data = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'price' => 'nullable|numeric|min:0',
+            'stock' => 'nullable|numeric|min:0',
+            'image' => 'nullable|url',
+            'specs' => 'nullable|string',
+        ]);
+    
+        // Update the product's fields if provided
+        if ($data['name']) $product->name = $data['name'];
+        if ($data['price']) $product->price = $data['price'];
+        if ($data['stock']) $product->stock = $data['stock'];
+        if ($data['image']) $product->image = $data['image'];
+        if ($data['specs']) $product->specs = json_encode(explode(',', $data['specs']));
+    
+        // Save the updated product
+        $product->save();
+        return Redirect::to("/dashboard");
 
+    }
+    
     /**
      * Remove the specified resource from storage.
      */

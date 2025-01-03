@@ -3,18 +3,21 @@ import AddProductModal from "@/Components/Dashboard/AddProductForm";
 import ProductCard from "@/Components/Dashboard/ProductCard";
 import PrimaryButton from "@/Components/PrimaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import useProductStore from "@/Store/useProductStore";
 import { Head } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
 export default function Dashboard({ products: initialProducts }) {
-  const [products, setProducts] = useState(initialProducts);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const { products, setProducts } = useProductStore();
 
-  // to handle product deletion UI cuz, fuck react key conflict
-  const handleDeleteProduct = (productId) => {
-    setProducts(products.filter((product) => product.id !== productId));
-  };
+  useEffect(() => {
+    if (initialProducts) {
+      setProducts(initialProducts);
+    }
+  }, [initialProducts, setProducts]);
+
+  const [showAddModal, setShowAddModal] = useState(false);
 
   return (
     <AuthenticatedLayout header="Dashboard">
@@ -36,15 +39,17 @@ export default function Dashboard({ products: initialProducts }) {
             </DangerButton>
           </div>
         </div>
+
+        {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-2 sm:p-4 xl:p-8">
           {products.map((product) => (
             <ProductCard
-              key={product.id}
+              key={product.id + product.name}
               {...product}
-              onDelete={handleDeleteProduct}
             />
           ))}
         </div>
+
       </div>
 
       {/* Add Product Modal */}
