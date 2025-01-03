@@ -3,7 +3,7 @@ export default function ProductCard({ name, price, image, specs }) {
     <div className="flex flex-col justify-center items-center rounded-lg shadow-md overflow-hidden bg-gray-50 dark:bg-[#1F2937] border-2 border-[#343E4E]">
       {image && (
         <div className="relative w-full">
-          <img src={image} alt={name} fill className="object-cover p-2" />
+          <img src={image} alt={name} fill="true" className="object-cover p-2" />
         </div>
       )}
       <div className="p-4 flex-grow flex flex-col">
