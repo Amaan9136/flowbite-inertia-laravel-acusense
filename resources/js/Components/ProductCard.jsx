@@ -9,9 +9,9 @@ export default function ProductCard({ name, price, image, specs }) {
           <img src={image} alt={name} fill="true" className="object-cover p-2" />
         </div>
       )}
-      <div className="p-4 flex-grow flex flex-col">
-        <h2 className="text-lg font-semibold mb-2">{name}</h2>
-        <p className="text-2xl font-bold mb-2">${price.toFixed(2)}</p>
+      <div className="p-2 flex-grow flex flex-col">
+        <h2 className="text-lg font-semibold">{name}</h2>
+        <p className="text-md font-bold mb-2">${price.toFixed(2)}</p>
         <div className="flex flex-wrap gap-2 mt-auto">
           {specsArray.map((spec, index) => (
             <span
