@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('image')->nullable();
             $table->float('price');
+            $table->int('stock');
             $table->json('specs')->nullable();
             $table->timestamps();
         });

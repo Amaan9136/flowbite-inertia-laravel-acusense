@@ -1,8 +1,7 @@
 import DangerButton from "@/Components/DangerButton";
 import AddProductModal from "@/Components/Dashboard/AddProductForm";
-import DeleteProductModal from "@/Components/Dashboard/DeleteProductForm";
+import ProductCard from "@/Components/Dashboard/ProductCard";
 import PrimaryButton from "@/Components/PrimaryButton";
-import ProductCard from "@/Components/ProductCard";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { useState } from "react";
@@ -10,7 +9,6 @@ import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
 export default function Dashboard({ products }) {
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   
   return (
     <AuthenticatedLayout header="Dashboard">
@@ -28,10 +26,9 @@ export default function Dashboard({ products }) {
             </PrimaryButton>
             <DangerButton
               className="ms-4 flex items-center space-x-2"
-              onClick={() => setShowDeleteModal(true)}
             >
               <AiOutlineMinusCircle className="text-xl" />
-              <span>Delete Product</span>
+              <span>Maybe you need me someday button</span>
             </DangerButton>
           </div>
         </div>
@@ -48,11 +45,6 @@ export default function Dashboard({ products }) {
         setShowAddModal={setShowAddModal}
       />
 
-      {/* Delete Product Modal */}
-      <DeleteProductModal
-        showDeleteModal={showDeleteModal}
-        setShowDeleteModal={setShowDeleteModal}
-      />
     </AuthenticatedLayout>
   );
 }

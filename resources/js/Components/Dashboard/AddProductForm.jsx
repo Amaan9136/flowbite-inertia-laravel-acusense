@@ -6,6 +6,7 @@ import TextInput from "@/Components/TextInput";
 import useProductStore from "@/Store/useProductStore";
 import { useForm } from "@inertiajs/react";
 import { useState } from "react";
+import SecondaryButton from "../SecondaryButton";
 
 export default function AddProductModal({ showAddModal, setShowAddModal }) {
   const { addProduct } = useProductStore();
@@ -15,6 +16,7 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
     image: "",
     price: "",
     specs: "",
+    stock: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -23,6 +25,7 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
     const newErrors = {};
     if (!data.name.trim()) newErrors.name = "Product name is required.";
     if (!data.price) newErrors.price = "Price is required.";
+    if (!data.stock) newErrors.stock = "Stock is required.";
     if (!data.specs.trim()) newErrors.specs = "Specifications are required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -42,7 +45,7 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
       specs: data.specs.split(",").map((spec) => spec.trim()), // Convert specs to an array
     };
 
-    post("/products", {
+    post("/api/products", {
       data: parsedData,
       onSuccess: () => {
         addProduct(parsedData);
@@ -56,6 +59,10 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
   return (
     <Modal show={showAddModal} onClose={() => setShowAddModal(false)}>
       <form onSubmit={addItem} className="p-6 space-y-4">
+          <h2 className="text-xl font-semibold dark:text-white">
+            Add Product
+          </h2>
+
         {/* Product Name */}
         <div>
           <InputLabel
@@ -133,8 +140,34 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
           <InputError message={errors.specs} />
         </div>
 
-        <div className="mt-4 flex justify-end">
-          <PrimaryButton type="submit">Add Product</PrimaryButton>
+        {/* Stocks */}
+        <div>
+          <InputLabel
+            htmlFor="stock"
+            value="Stock"
+            className="dark:text-white"
+          />
+          <TextInput
+            id="stock"
+            name="stock"
+            type="number"
+            min="0"
+            value={data.stock}
+            onChange={(e) =>
+              setData("stock", e.target.value ? parseFloat(e.target.value) : "")
+            }
+            className="mt-1 block w-full text-gray-900"
+          />
+          <InputError message={errors.stock} />
+        </div>
+
+        <div className="mt-4 flex justify-end space-x-4">
+          <SecondaryButton
+            onClick={() => setShowAddModal(false)}
+          >
+            Close
+          </SecondaryButton>
+          <PrimaryButton type="submit" className="border border-white">Add Product</PrimaryButton>
         </div>
       </form>
     </Modal>

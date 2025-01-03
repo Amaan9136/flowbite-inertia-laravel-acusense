@@ -33,6 +33,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'stock' => 'required|numeric|min:0',
             'image' => 'nullable|url',
             'specs' => 'required|string',  
         ]);
@@ -42,6 +43,7 @@ class ProductController extends Controller
         $new_product = new Product;
         $new_product->name = $data['name'];
         $new_product->price = $data['price'];
+        $new_product->stock = $data['stock'];
         $new_product->image = $data['image'];
         $new_product->specs = $data['specs']; 
         $new_product->save();
