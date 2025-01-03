@@ -10,6 +10,7 @@ import useProductStore from "@/Store/useProductStore";
 import { Head } from "@inertiajs/react";
 import { useState } from "react";
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
+import { router } from "@inertiajs/react";
 
 export default function Dashboard() {
   const { products, addProduct, removeProduct } = useProductStore(); // Assuming removeProduct exists in the store
@@ -55,7 +56,15 @@ export default function Dashboard() {
       specs: formData.specs.split(",").map((spec) => spec.trim()),
     };
 
-    addProduct(newProduct);
+    router.post("/products", newProduct, {
+      async: true,
+      onSuccess: (res) => {
+        console.log({ res });
+        alert("Successfull!");
+        addProduct(newProduct);
+      },
+    });
+
     setFormData({ name: "", image: "", price: "", specs: "" });
     setErrors({});
     setShowAddModal(false);
@@ -64,7 +73,9 @@ export default function Dashboard() {
   const submitDelete = (e) => {
     e.preventDefault();
 
-    const productToDelete = products.find((product) => product.name === deleteName);
+    const productToDelete = products.find(
+      (product) => product.name === deleteName
+    );
     if (!productToDelete) {
       setErrors({ deleteName: "Product not found." });
       return;
@@ -149,7 +160,10 @@ export default function Dashboard() {
           </div>
 
           <div>
-            <InputLabel htmlFor="specs" value="Specifications (comma-separated)" />
+            <InputLabel
+              htmlFor="specs"
+              value="Specifications (comma-separated)"
+            />
             <TextInput
               id="specs"
               name="specs"
