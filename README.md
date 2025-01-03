@@ -100,3 +100,15 @@ actual output will be laravel
 ```
 php artisan serve
 ```
+
+
+CONST PRODUCTS:
+
+INSERT INTO products (name, image, price, specs)
+VALUES 
+("Hikvision DS-2CD2143G0-I", "https://tse4.mm.bing.net/th?id=OIP.Gn_xCJ2p6fvzPBZI2LXdEgHaFj&pid=Api", 5999, '["4 MP", "Infrared Night Vision", "Weatherproof", "Wide Dynamic Range"]'),
+("Dahua IPC-HFW1431S", "https://tse1.mm.bing.net/th?id=OIP.x7qenAWmOYZJwkxG2PJuCgHaGT&pid=Api", 6899, '["4 MP", "30m IR Distance", "Smart Motion Detection", "H.265 Compression"]'),
+("TP-Link Tapo C200", "https://tse2.mm.bing.net/th?id=OIP._SEGUu7a8p8NUUonk4G5DAHaFc&pid=Api", 2499, '["Full HD", "Pan/Tilt", "Two-Way Audio", "Motion Detection"]'),
+("CP PLUS CP-UNC-T41L3", "https://tse2.mm.bing.net/th?id=OIP.tNvLaVgZVXOMYu_po5tCrAHaE8&pid=Api", 7999, '["4 MP", "30m IR Range", "PoE Support", "ONVIF Compatible"]'),
+("Zmodo Outdoor Wireless Camera", "https://tse1.mm.bing.net/th?id=OIP.Gn_xCJ2p6fvzPBZI2LXdEgHaFj&pid=Api", 4599, '["720p HD", "Wi-Fi Connectivity", "Motion Alerts", "Weatherproof Design"]'),
+("Reolink Argus 2", "https://tse2.mm.bing.net/th?id=OIP.tNvLaVgZVXOMYu_po5tCrAHaE8&pid=Api", 8999, '["1080p Full HD", "Solar Powered", "Two-Way Audio", "Starlight Night Vision"]');
