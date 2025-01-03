@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class ProductController extends Controller
 {
@@ -28,22 +29,25 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        // Validate the request data
+        $data = $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'image' => 'required|string',
-            'specs' => 'required|array',
+            'price' => 'required|numeric|min:0',
+            'image' => 'nullable|url',
+            'specs' => 'required|string',  
         ]);
 
+        $data['specs'] = json_encode(explode(',', $data['specs']));
+
         $new_product = new Product;
-        $new_product->name = $validatedData['name'];
-        $new_product->price = $validatedData['price'];
-        $new_product->image = $validatedData['image'];
-        $new_product->specs = json_encode($validatedData['specs']);
+        $new_product->name = $data['name'];
+        $new_product->price = $data['price'];
+        $new_product->image = $data['image'];
+        $new_product->specs = $data['specs']; 
         $new_product->save();
 
-
-        return Redirect("/dashboard");
+        // Redirect after saving the product
+        return Redirect::to("/dashboard");
     }
 
     /**

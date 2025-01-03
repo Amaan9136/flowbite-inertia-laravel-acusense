@@ -30,17 +30,22 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
 
   const addItem = (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      // Focus on the first invalid input
+      const firstErrorField = Object.keys(errors)[0];
+      document.getElementById(firstErrorField)?.focus();
+      return;
+    }
 
-    const formattedData = {
+    const parsedData = {
       ...data,
-      specs: data.specs.split(",").map((item) => item.trim()), 
+      specs: data.specs.split(",").map((spec) => spec.trim()), // Convert specs to an array
     };
 
     post("/products", {
-      data: formattedData,
+      data: parsedData,
       onSuccess: () => {
-        addProduct(formattedData); 
+        addProduct(parsedData);
         reset();
         setShowAddModal(false);
       },
@@ -83,6 +88,7 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
             value={data.image}
             onChange={(e) => setData("image", e.target.value)}
             className="mt-1 block w-full text-gray-900"
+            placeholder="https://example.com/image.jpg"
           />
         </div>
 
@@ -108,10 +114,11 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
           <InputError message={errors.price} />
         </div>
 
+        {/* Specifications */}
         <div>
           <InputLabel
             htmlFor="specs"
-            value='Specifications (comma-separated)'
+            value="Specifications (comma-separated)"
             className="dark:text-white"
           />
           <TextInput
@@ -121,6 +128,7 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
             value={data.specs}
             onChange={(e) => setData("specs", e.target.value)}
             className="mt-1 block w-full text-gray-900"
+            placeholder="e.g., Durable, Lightweight, Fast"
           />
           <InputError message={errors.specs} />
         </div>
