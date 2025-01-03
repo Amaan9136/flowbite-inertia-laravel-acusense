@@ -56,6 +56,8 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
         <SecondaryButton className="flex items-center px-2 py-1" type="button" onClick={handleEditClick}>
           Edit
         </SecondaryButton>
+
+        {/* issue #7 */}
         <DangerButton
           className="flex items-center px-2 py-1"
           type="button" 
