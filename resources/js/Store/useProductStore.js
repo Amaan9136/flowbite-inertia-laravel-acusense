@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const useProductStore = create((set) => ({
-  products : [
+  constProducts : [
     {
       name: "Hikvision DS-2CD2143G0-I",
       image:

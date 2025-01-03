@@ -4,6 +4,7 @@ import DeleteProductModal from "@/Components/Dashboard/DeleteProductForm";
 import PrimaryButton from "@/Components/PrimaryButton";
 import ProductCard from "@/Components/ProductCard";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import useProductStore from "@/Store/useProductStore"; // Import the custom store
 import { Head } from "@inertiajs/react";
 import { useState } from "react";
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
@@ -11,6 +12,11 @@ import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 export default function Dashboard({ products }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { constProducts } = useProductStore();
+  console.log(constProducts, products);
+  
+
+  const mergedProd = [ ...constProducts, ...products];
 
   return (
     <AuthenticatedLayout header="Dashboard">
@@ -36,7 +42,7 @@ export default function Dashboard({ products }) {
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-2 sm:p-4 xl:p-8">
-          {products.map((product, index) => (
+          {mergedProd.map((product, index) => (
             <ProductCard key={index} {...product} />
           ))}
         </div>
