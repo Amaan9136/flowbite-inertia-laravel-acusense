@@ -1,20 +1,24 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import useStore from '@/Store/useThemeStore';
 import { Link, usePage } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { FaMoon, FaSun } from 'react-icons/fa';
 import { route } from 'ziggy-js';
 import AuthSideBar from './AuthSideBar';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
+    const { isDarkMode, toggleTheme } = useStore();
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
     return (
         <div className="min-h-screen bg-gray-50 text-black/60 dark:bg-gray-900 dark:text-white/60">
-            <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
+            <nav className="border-b-2 border-[#343E4E] bg-white dark:border-gray-700 dark:bg-gray-800">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
@@ -72,6 +76,24 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>
+                            <motion.button
+                    onClick={toggleTheme}
+                    className="rounded-md ml-4 px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                    key={isDarkMode ? 'sun' : 'moon'}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{
+                        duration: 0.5,
+                        ease: "easeInOut",
+                    }}
+                >
+                    {isDarkMode ? (
+                        <FaSun className="text-yellow-500 text-2xl transition-transform duration-300 transform hover:scale-110" />
+                    ) : (
+                        <FaMoon className="text-blue-500 text-2xl transition-transform duration-300 transform hover:scale-110" />
+                    )}
+                </motion.button>
                         </div>
 
                         <div className="-me-2 flex items-center sm:hidden">
