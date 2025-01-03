@@ -7,9 +7,15 @@ import { Head } from "@inertiajs/react";
 import { useState } from "react";
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
-export default function Dashboard({ products }) {
+export default function Dashboard({ products: initialProducts }) {
+  const [products, setProducts] = useState(initialProducts);
   const [showAddModal, setShowAddModal] = useState(false);
-  
+
+  // to handle product deletion UI cuz, fuck react key conflict
+  const handleDeleteProduct = (productId) => {
+    setProducts(products.filter((product) => product.id !== productId));
+  };
+
   return (
     <AuthenticatedLayout header="Dashboard">
       <Head title="Dashboard" />
@@ -24,17 +30,19 @@ export default function Dashboard({ products }) {
               <AiOutlinePlusCircle className="text-xl" />
               <span>Add New Product</span>
             </PrimaryButton>
-            <DangerButton
-              className="ms-4 flex items-center space-x-2"
-            >
+            <DangerButton className="ms-4 flex items-center space-x-2">
               <AiOutlineMinusCircle className="text-xl" />
               <span>Maybe you need me someday button</span>
             </DangerButton>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-2 sm:p-4 xl:p-8">
-          {products.map((product, index) => (
-            <ProductCard key={index} {...product} />
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              {...product}
+              onDelete={handleDeleteProduct}
+            />
           ))}
         </div>
       </div>
@@ -44,7 +52,6 @@ export default function Dashboard({ products }) {
         showAddModal={showAddModal}
         setShowAddModal={setShowAddModal}
       />
-
     </AuthenticatedLayout>
   );
 }
