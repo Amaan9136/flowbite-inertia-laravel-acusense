@@ -8,26 +8,30 @@ import PrimaryButton from "./PrimaryButton";
 export default function ConfirmModal({
   showDeleteModal,
   setShowDeleteModal,
-  handleDelete,
+  handleFunction,
   buttonType,
-  btnName
+  btnName,
+  confirmMsg
 }) {
   return (
     <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-      <form onSubmit={handleDelete} className="p-6 space-y-4">
+      <div className="p-6 space-y-4">
         <p className="text-lg font-semibold">
-          Are you sure you want to delete this product?
+          {confirmMsg}
         </p>
         <div className="mt-4 flex justify-end space-x-4">
           <SecondaryButton onClick={() => setShowDeleteModal(false)}>
             Close
           </SecondaryButton>
-          {buttonType == "danger" ?
-            <DangerButton type="submit">{btnName}</DangerButton>
-            :
-            <PrimaryButton type="submit" className="border border-white">{btnName}</PrimaryButton>}
+          {buttonType === "danger" ? (
+            <DangerButton onClick={handleFunction}>{btnName}</DangerButton>
+          ) : (
+            <PrimaryButton onClick={handleFunction} className="border border-white">
+              {btnName}
+            </PrimaryButton>
+          )}
         </div>
-      </form>
+      </div>
     </Modal>
   );
 }

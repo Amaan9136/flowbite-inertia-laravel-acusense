@@ -61,8 +61,7 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
         <DangerButton
           className="flex items-center px-2 py-1"
           type="button" 
-          onClick={(e) => {
-            e.preventDefault(); 
+          onClick={() => {
             setShowDeleteModal(true);
           }}
         >
@@ -75,9 +74,10 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
         <ConfirmModal
           showDeleteModal={showDeleteModal}
           setShowDeleteModal={setShowDeleteModal}
-          handleDelete={handleDelete}
+          handleFunction={handleDelete}
           btnName="Confirm Delete"
           buttonType="danger"
+          confirmMsg="Are you sure you want to delete this product?"
         />
       )}
 
