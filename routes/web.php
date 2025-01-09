@@ -20,12 +20,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $products = Product::all()->toArray();
-    $parsed_prducts = array_map(function($p) {
-        return [
-            ...$p,
-            "specs" => json_decode($p['specs'])
-        ];
-    }, $products);
+    $parsed_prducts = array_map(fn($p) => ([...$p, "specs" => json_decode($p['specs'])]), $products);
     return Inertia::render('Dashboard', ["products" => $parsed_prducts]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
