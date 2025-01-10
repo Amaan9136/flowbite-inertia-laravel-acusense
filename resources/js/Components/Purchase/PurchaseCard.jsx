@@ -1,11 +1,27 @@
-import useProductStore from "@/Store/useProductStore";
 import { useMemo } from "react";
 import { MdRemoveShoppingCart } from "react-icons/md";
+import { useForm } from "@inertiajs/react";
+import toast from "react-hot-toast";
+
+import useProductStore from "@/Store/useProductStore";
 import SecondaryButton from "../SecondaryButton";
 
-export default function PurchaseCard({ id, name, price, image, specs, stock }) {
-  const { addProductToPurchase, addToPurchase, removeFromPurchase } =
+export default function PurchaseCard({
+  id,
+  name,
+  price,
+  image,
+  specs,
+  stock,
+  isInCart,
+}) {
+  const { addProductToPurchase, removeFromPurchase, updateProduct } =
     useProductStore();
+
+  const { data, setData, post, processing, reset } = useForm({
+    id,
+    stock: 0,
+  });
 
   const specsArray = useMemo(
     () =>
@@ -13,13 +29,25 @@ export default function PurchaseCard({ id, name, price, image, specs, stock }) {
     [specs]
   );
 
-  const isProductAdded = useMemo(
-    () => addToPurchase.some((product) => product.id === id),
-    [addToPurchase, id]
-  );
+  const incrementStock = () =>
+    setData(
+      "stock",
+      data.stock >= stock ? stock : data.stock < 0 ? 0 : data.stock + 1
+    );
+
+  const decrementStock = () =>
+    setData(
+      "stock",
+      data.stock > stock ? stock : data.stock <= 0 ? 0 : data.stock - 1
+    );
+  const changeStock = (e) =>
+    setData(
+      "stock",
+      e.target.value > stock ? stock : e.target.value < 0 ? 0 : e.target.value
+    );
 
   const handleAddToPurchase = () => {
-    if (!isProductAdded) {
+    if (!isInCart) {
       const productData = { id, name, price, image, specs, stock };
       addProductToPurchase(productData);
     } else {
@@ -27,8 +55,17 @@ export default function PurchaseCard({ id, name, price, image, specs, stock }) {
     }
   };
 
-  const handleAnyShit = async () => {
-    console.log("fack");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    post("/purchase", {
+      async: true,
+      onSuccess: ({ props }) => {
+        const tst = props.success ? toast.success : toast.error;
+        tst(props.message);
+        updateProduct(id, props.product);
+        reset("stock");
+      },
+    });
   };
 
   return (
@@ -41,7 +78,8 @@ export default function PurchaseCard({ id, name, price, image, specs, stock }) {
       <div className="flex-grow flex flex-col md:flex-row items-center justify-between w-full ml-4">
         <div className="flex flex-col">
           <h2 className="text-lg font-semibold">{name}</h2>
-          <p className="text-md font-bold mb-2">${price.toFixed(2)}</p>
+          <p className="text-md font-bold">${price.toFixed(2)}</p>
+          <p className="text-md mb-2">Available: {stock}</p>
           <div className="flex flex-wrap gap-2 mt-auto">
             {specsArray.map((spec, index) => (
               <span
@@ -54,24 +92,50 @@ export default function PurchaseCard({ id, name, price, image, specs, stock }) {
           </div>
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center mt-2 md:mt-0  ml-4">
-          <div className="flex justify-center gap-6 w-full mt-2 md:mt-0">
-            <span className="px-2 py-1 flex justify-center bg-[#4F46E5] text-white font-bold text-sm rounded-md">
-              Stock: {stock}
-            </span>
+          <form
+            onSubmit={handleSubmit}
+            className="flex justify-center gap-6 w-full mt-2 md:mt-0"
+          >
+            <div className="px-2 text-center content-center flex justify-center bg-[#4F46E5] text-white font-bold text-sm rounded-md">
+              <button
+                type="button"
+                disabled={processing}
+                onClick={decrementStock}
+                className="px-1"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                className="bg-transparent w-14 border-none"
+                value={data.stock}
+                onChange={changeStock}
+              />
+              <button
+                type="button"
+                disabled={processing}
+                onClick={incrementStock}
+                className="px-1"
+              >
+                +
+              </button>
+            </div>
             <button
+              type="button"
+              disabled={processing}
               onClick={handleAddToPurchase}
               className="inline-flex items-center rounded-md border border-transparent px-2 py-1 text-xs font-semibold tracking-widest transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 bg-red-500 text-white hover:bg-red-600 focus:ring-red-500"
             >
               <MdRemoveShoppingCart className="text-lg" />
             </button>
             <SecondaryButton
+              disabled={processing}
               className="flex items-center px-2 py-1"
-              type="button"
-              onClick={handleAnyShit}
+              type="submit"
             >
-              Shits Accepted
+              Confirm Purchase
             </SecondaryButton>
-          </div>
+          </form>
         </div>
       </div>
     </div>

@@ -1,13 +1,9 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\ProductController;
 use App\Models\Product;
-
-use function PHPSTORM_META\map;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -32,15 +28,5 @@ Route::get('/contact', function () {
     return Inertia::render('Contact');
 })->name('contact');
 
-Route::post('/api/products', [ProductController::class, 'store']);
-Route::delete('/api/products/{productId}', [ProductController::class, 'destroy']);
-Route::put('/api/products/{productId}', [ProductController::class, 'update']);
-
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
 require __DIR__ . '/auth.php';
+require __DIR__ . '/api.php';

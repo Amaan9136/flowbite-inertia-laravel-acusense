@@ -2,12 +2,11 @@ import { create } from "zustand";
 
 const useProductStore = create((set) => ({
   products: [],
-  addToPurchase: [],
   setProducts: (products) => set({ products }),
 
   addProduct: (product) =>
     set((state) => ({
-      products: [...state.products, product],
+      products: [...state.products, { product, isInCart: false }],
     })),
 
   removeProduct: (productId) =>
@@ -22,19 +21,18 @@ const useProductStore = create((set) => ({
       ),
     })),
 
-    addProductToPurchase: (product) =>
-      set((state) => {
-        const productExists = state.addToPurchase.some((p) => p.id === product.id);
-        if (productExists) return state;
-    
-        return {
-          addToPurchase: [...state.addToPurchase, product], 
-        };
-      }),
+  addProductToPurchase: (productId) =>
+    set((state) => ({
+      products: state.products.map((p) =>
+        p.id === productId ? { ...p, isInCart: true } : p
+      ),
+    })),
 
   removeFromPurchase: (productId) =>
     set((state) => ({
-      addToPurchase: state.addToPurchase.filter((product) => product.id !== productId),
+      products: state.products.map((p) =>
+        p.id === productId ? { ...p, isInCart: false } : p
+      ),
     })),
 }));
 

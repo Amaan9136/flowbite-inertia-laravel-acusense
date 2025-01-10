@@ -3,7 +3,7 @@ import useProductStore from "@/Store/useProductStore";
 import { Link } from "@inertiajs/react";
 
 const AuthSideBar = () => {
-  const { addToPurchase } = useProductStore();
+  const { products } = useProductStore();
 
   return (
     <nav className="relative hidden sm:block min-w-[15rem] w-[15rem] space-y-2 bg-gray-50 text-black/60 dark:bg-gray-900 dark:text-white/60 shadow-md p-4 border-r-2 border-[#343E4E]">
@@ -11,6 +11,7 @@ const AuthSideBar = () => {
         const isActive = route().current(element.path.replace("/", ""));
         return (
           <Link
+            preserveState
             key={index}
             href={element.path}
             className={`flex items-center space-x-4 rounded-md font-bold transition-all duration-300 ease-in-out px-2 py-2
@@ -22,11 +23,12 @@ const AuthSideBar = () => {
           >
             <span className="text-xl relative transform transition-transform duration-200 hover:scale-110">
               {<element.icon />}
-              {element.name === "Purchase" && addToPurchase.length != 0 && (
-                <span className="z-50 -top-3 -left-3 absolute inline-flex justify-center items-center size-4 text-xs font-bold text-white bg-red-500 rounded-full">
-                  {addToPurchase.length}
-                </span>
-              )}
+              {element.name === "Purchase" &&
+                products.filter((p) => p.isInCart).length != 0 && (
+                  <span className="z-50 -top-3 -left-3 absolute inline-flex justify-center items-center size-4 text-xs font-bold text-white bg-red-500 rounded-full">
+                    {products.filter((p) => p.isInCart).length}
+                  </span>
+                )}
             </span>
             <span>{element.name}</span>
           </Link>

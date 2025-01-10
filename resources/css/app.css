@@ -4,13 +4,13 @@
 
 body {
   transition: background-color 0.3s ease, color 0.3s ease;
-  background-color: #f8fafc; 
-  color: #374151; 
+  background-color: #f8fafc;
+  color: #374151;
 }
 
 .dark body {
-  background-color: #111827; 
-  color: #d1d5db; 
+  background-color: #111827;
+  color: #d1d5db;
 }
 
 ::-webkit-scrollbar {
@@ -34,4 +34,14 @@ body {
 
 .cursor-pointer:hover {
   opacity: 0.2;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
