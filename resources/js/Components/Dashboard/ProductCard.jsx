@@ -1,7 +1,7 @@
 import useProductStore from "@/Store/useProductStore";
 import axios from "axios";
-import { useState } from "react";
-import { MdAddShoppingCart } from "react-icons/md";
+import { useMemo, useState } from "react";
+import { MdAddShoppingCart, MdRemoveShoppingCart } from "react-icons/md";
 import ConfirmModal from "../ConfirmModel";
 import DangerButton from "../DangerButton";
 import SecondaryButton from "../SecondaryButton";
@@ -11,20 +11,32 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { removeProduct, addProductToPurchase } = useProductStore();
+  const { removeProduct, addProductToPurchase, addToPurchase, removeFromPurchase } = useProductStore();
 
-  const specsArray = typeof specs === "string" ? specs.split(",").map((s) => s.trim()) : specs;
+  const specsArray = useMemo(
+    () => (typeof specs === "string" ? specs.split(",").map((s) => s.trim()) : specs),
+    [specs]
+  );
+
+  const isProductAdded = useMemo(
+    () => addToPurchase.some((product) => product.id === id),
+    [addToPurchase, id]
+  );
 
   const handleAddToPurchase = () => {
-    const productData = { id, name, price, image, specs, stock }; 
-    addProductToPurchase(productData);
+    if (!isProductAdded) {
+      const productData = { id, name, price, image, specs, stock };
+      addProductToPurchase(productData);
+    } else {
+      removeFromPurchase(id);
+    }
   };
 
   const handleDelete = async () => {
     try {
       await axios.delete(`/api/products/${id}`);
-      removeProduct(id); 
-      setShowDeleteModal(false); 
+      removeProduct(id);
+      setShowDeleteModal(false);
     } catch (error) {
       console.error("Failed to delete product:", error);
     }
@@ -47,7 +59,12 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
         <p className="text-md font-bold mb-2">${price.toFixed(2)}</p>
         <div className="flex flex-wrap gap-2 mt-auto">
           {specsArray.map((spec, index) => (
-            <span key={index} className="px-2 py-1 bg-gray-200 text-gray-700 text-sm rounded-full">{spec}</span>
+            <span
+              key={index}
+              className="px-2 py-1 bg-gray-200 text-gray-700 text-sm rounded-full"
+            >
+              {spec}
+            </span>
           ))}
         </div>
         <span className="px-2 py-1 flex justify-center bg-[#4F46E5] text-white font-bold text-gray-700 text-sm rounded-md mt-2">
@@ -55,23 +72,36 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
         </span>
       </div>
       <div className="flex justify-center gap-3 w-full mb-1">
-        <button onClick={handleAddToPurchase} className="inline-flex items-center rounded-md border border-transparent bg-[#4F46E5] px-2 py-1 text-xs font-semibold tracking-widest text-white transition duration-150 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900">
-          <MdAddShoppingCart className="text-lg" />
+        <button
+          onClick={handleAddToPurchase}
+          className={`inline-flex items-center rounded-md border border-transparent px-2 py-1 text-xs font-semibold tracking-widest transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ${isProductAdded
+              ? "bg-red-500 text-white hover:bg-red-600 focus:ring-red-500"
+              : "bg-[#4F46E5] text-white hover:bg-blue-700 focus:ring-indigo-500"
+            }`}
+        >
+          {isProductAdded ?
+            <MdRemoveShoppingCart className="text-lg" /> :
+            <MdAddShoppingCart className="text-lg" />
+          }
+
         </button>
-        <SecondaryButton className="flex items-center px-2 py-1" type="button" onClick={handleEditClick}>
+        <SecondaryButton
+          className="flex items-center px-2 py-1"
+          type="button"
+          onClick={handleEditClick}
+        >
           Edit
         </SecondaryButton>
 
         <DangerButton
           className="flex items-center px-2 py-1"
-          type="button" 
+          type="button"
           onClick={() => {
             setShowDeleteModal(true);
           }}
         >
           Delete
         </DangerButton>
-
       </div>
 
       {showDeleteModal && (

@@ -24,6 +24,10 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard', ["products" => $parsed_prducts]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/purchase', function () {
+    return Inertia::render('Purchase');
+})->name('purchase');
+
 Route::get('/contact', function () {
     return Inertia::render('Contact');
 })->name('contact');
