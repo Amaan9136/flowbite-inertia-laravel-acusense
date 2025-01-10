@@ -1,10 +1,13 @@
 import PurchaseCard from "@/Components/Purchase/PurchaseCard";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import useProductStore from "@/Store/useProductStore";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 
 export default function Purchase() {
   const { addProductToPurchase, addToPurchase, removeFromPurchase } = useProductStore();
+  const user = usePage().props.auth.user;
+  console.log(user);
+
 
   return (
     <AuthenticatedLayout header="Purchase">

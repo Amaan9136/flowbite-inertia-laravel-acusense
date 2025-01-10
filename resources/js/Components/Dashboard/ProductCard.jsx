@@ -1,4 +1,5 @@
 import useProductStore from "@/Store/useProductStore";
+import { usePage } from "@inertiajs/react";
 import axios from "axios";
 import { useMemo, useState } from "react";
 import { MdAddShoppingCart, MdRemoveShoppingCart } from "react-icons/md";
@@ -12,6 +13,7 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const { removeProduct, addProductToPurchase, addToPurchase, removeFromPurchase } = useProductStore();
+  const user = usePage().props.auth.user;
 
   const specsArray = useMemo(
     () => (typeof specs === "string" ? specs.split(",").map((s) => s.trim()) : specs),
@@ -75,8 +77,8 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
         <button
           onClick={handleAddToPurchase}
           className={`inline-flex items-center rounded-md border border-transparent px-2 py-1 text-xs font-semibold tracking-widest transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ${isProductAdded
-              ? "bg-red-500 text-white hover:bg-red-600 focus:ring-red-500"
-              : "bg-[#4F46E5] text-white hover:bg-blue-700 focus:ring-indigo-500"
+            ? "bg-red-500 text-white hover:bg-red-600 focus:ring-red-500"
+            : "bg-[#4F46E5] text-white hover:bg-blue-700 focus:ring-indigo-500"
             }`}
         >
           {isProductAdded ?
@@ -85,23 +87,26 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
           }
 
         </button>
-        <SecondaryButton
-          className="flex items-center px-2 py-1"
-          type="button"
-          onClick={handleEditClick}
-        >
-          Edit
-        </SecondaryButton>
+        {user.name == "admin" &&
+          <>
+            <SecondaryButton
+              className="flex items-center px-2 py-1"
+              type="button"
+              onClick={handleEditClick}
+            >
+              Edit
+            </SecondaryButton>
 
-        <DangerButton
-          className="flex items-center px-2 py-1"
-          type="button"
-          onClick={() => {
-            setShowDeleteModal(true);
-          }}
-        >
-          Delete
-        </DangerButton>
+            <DangerButton
+              className="flex items-center px-2 py-1"
+              type="button"
+              onClick={() => {
+                setShowDeleteModal(true);
+              }}
+            >
+              Delete
+            </DangerButton>
+          </>}
       </div>
 
       {showDeleteModal && (
