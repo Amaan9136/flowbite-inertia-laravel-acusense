@@ -1,5 +1,5 @@
 import useProductStore from "@/Store/useProductStore";
-import { usePage } from "@inertiajs/react";
+// import { usePage } from "@inertiajs/react";
 import axios from "axios";
 import { useMemo, useState } from "react";
 import { MdAddShoppingCart, MdRemoveShoppingCart } from "react-icons/md";
@@ -13,7 +13,7 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const { removeProduct, addProductToPurchase, addToPurchase, removeFromPurchase } = useProductStore();
-  const user = usePage().props.auth.user;
+  // const user = usePage().props.auth.user;
 
   const specsArray = useMemo(
     () => (typeof specs === "string" ? specs.split(",").map((s) => s.trim()) : specs),
@@ -87,26 +87,27 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
           }
 
         </button>
-        {user.name == "admin" &&
+        {/* {user.name == "admin" &&
           <>
-            <SecondaryButton
-              className="flex items-center px-2 py-1"
-              type="button"
-              onClick={handleEditClick}
-            >
-              Edit
-            </SecondaryButton>
+        */}
+        <SecondaryButton
+          className="flex items-center px-2 py-1"
+          type="button"
+          onClick={handleEditClick}
+        >
+          Edit
+        </SecondaryButton>
 
-            <DangerButton
-              className="flex items-center px-2 py-1"
-              type="button"
-              onClick={() => {
-                setShowDeleteModal(true);
-              }}
-            >
-              Delete
-            </DangerButton>
-          </>}
+        <DangerButton
+          className="flex items-center px-2 py-1"
+          type="button"
+          onClick={() => {
+            setShowDeleteModal(true);
+          }}
+        >
+          Delete
+        </DangerButton>
+        {/* </>} */}
       </div>
 
       {showDeleteModal && (
