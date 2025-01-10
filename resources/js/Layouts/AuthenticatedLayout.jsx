@@ -185,7 +185,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
             <div className="flex">
                 <AuthSideBar />
-                <main>{children}</main>
+                <main className="flex-1">{children}</main>
             </div>
 
         </div>

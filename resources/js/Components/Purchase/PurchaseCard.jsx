@@ -4,10 +4,12 @@ import { MdRemoveShoppingCart } from "react-icons/md";
 import SecondaryButton from "../SecondaryButton";
 
 export default function PurchaseCard({ id, name, price, image, specs, stock }) {
-  const { addProductToPurchase, addToPurchase, removeFromPurchase } = useProductStore();
+  const { addProductToPurchase, addToPurchase, removeFromPurchase } =
+    useProductStore();
 
   const specsArray = useMemo(
-    () => (typeof specs === "string" ? specs.split(",").map((s) => s.trim()) : specs),
+    () =>
+      typeof specs === "string" ? specs.split(",").map((s) => s.trim()) : specs,
     [specs]
   );
 
@@ -53,7 +55,7 @@ export default function PurchaseCard({ id, name, price, image, specs, stock }) {
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center mt-2 md:mt-0  ml-4">
           <div className="flex justify-center gap-6 w-full mt-2 md:mt-0">
-            <span className="px-2 py-1 flex justify-center bg-[#4F46E5] text-white font-bold text-gray-700 text-sm rounded-md">
+            <span className="px-2 py-1 flex justify-center bg-[#4F46E5] text-white font-bold text-sm rounded-md">
               Stock: {stock}
             </span>
             <button

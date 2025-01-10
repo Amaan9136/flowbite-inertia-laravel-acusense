@@ -69,7 +69,7 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
             </span>
           ))}
         </div>
-        <span className="px-2 py-1 flex justify-center bg-[#4F46E5] text-white font-bold text-gray-700 text-sm rounded-md mt-2">
+        <span className="px-2 py-1 flex justify-center bg-[#4F46E5] text-white font-bold text-sm rounded-md mt-2">
           Stock : {stock}
         </span>
       </div>
