@@ -7,6 +7,16 @@ const NeedAuthPageData = [
     icon: RiBarChart2Line
   },
   {
+    name: "Purchase",
+    path: "/purchase",
+    icon: RiShoppingCartLine
+  },
+  {
+    name: "Purchase Invoice",
+    path: "/purchase-invoice",
+    icon: RiBillLine
+  },
+  {
     name: "Analytics",
     path: "/analytics",
     icon: RiBarChartLine
@@ -20,16 +30,6 @@ const NeedAuthPageData = [
     name: "Product",
     path: "/product",
     icon: RiProductHuntLine
-  },
-  {
-    name: "Purchase Invoice",
-    path: "/purchase-invoice",
-    icon: RiBillLine
-  },
-  {
-    name: "Purchase",
-    path: "/purchase",
-    icon: RiShoppingCartLine
   },
   {
     name: "Transfer",

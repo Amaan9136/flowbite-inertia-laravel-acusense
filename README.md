@@ -101,8 +101,6 @@ actual output will be laravel
 php artisan serve
 ```
 
-Product Factory
-
 ```sql
 INSERT INTO products (name, image, price, specs, stock) 
 VALUES 

@@ -11,9 +11,14 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { removeProduct } = useProductStore();
+  const { removeProduct, addProductToPurchase } = useProductStore();
 
   const specsArray = typeof specs === "string" ? specs.split(",").map((s) => s.trim()) : specs;
+
+  const handleAddToPurchase = () => {
+    const productData = { id, name, price, image, specs, stock }; 
+    addProductToPurchase(productData);
+  };
 
   const handleDelete = async () => {
     try {
@@ -50,14 +55,13 @@ export default function ProductCard({ id, name, price, image, specs, stock }) {
         </span>
       </div>
       <div className="flex justify-center gap-3 w-full mb-1">
-        <button className="inline-flex items-center rounded-md border border-transparent bg-[#4F46E5] px-2 py-1 text-xs font-semibold tracking-widest text-white transition duration-150 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900">
+        <button onClick={handleAddToPurchase} className="inline-flex items-center rounded-md border border-transparent bg-[#4F46E5] px-2 py-1 text-xs font-semibold tracking-widest text-white transition duration-150 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900">
           <MdAddShoppingCart className="text-lg" />
         </button>
         <SecondaryButton className="flex items-center px-2 py-1" type="button" onClick={handleEditClick}>
           Edit
         </SecondaryButton>
 
-        {/* issue #7 */}
         <DangerButton
           className="flex items-center px-2 py-1"
           type="button" 
