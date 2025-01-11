@@ -8,9 +8,9 @@ class Purchase extends Model
 {
 
     protected $fillable = [
-        'user_id',
-        'product_id',
-        'stock'
+        'customer_id',
+        'total_material_price',
+        'gst',
+        'final_amount'
     ];
-    //
 }

@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->integer('stock');
+            $table->float('final_amount');
+            $table->float('gst');
+            $table->float('total_material_price');
             $table->timestamps();
         });
     }

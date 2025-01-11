@@ -1,14 +1,17 @@
+import { useState } from "react";
+import { router } from "@inertiajs/react";
+
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
-import { useState } from "react";
 import Modal from "../Modal";
 import SecondaryButton from "../SecondaryButton";
+import toast from "react-hot-toast";
 
 export default function PurchaseTable({ addToPurchase }) {
   const [showModal, setShowModal] = useState(false);
-  const [data, setData] = useState({ custname: '', phone: '' });
-  const [errors, setErrors] = useState({ custname: '', phone: '' });
+  const [data, setData] = useState({ custname: "", phone: "" });
+  const [errors, setErrors] = useState({ custname: "", phone: "" });
 
   let total = 0;
   let calculatedGst = 0;
@@ -54,42 +57,29 @@ export default function PurchaseTable({ addToPurchase }) {
       return;
     }
 
-    alert("check console")
-
-    console.log({
-      custname: data.custname,
-      phone: data.phone,
-      items: addToPurchase,
+    const payload = {
+      customerName: data.custname,
+      phoneNumber: data.phone,
+      items: addToPurchase.map((p) => ({ id: p.id, quantity: p.quantity })),
       totalMaterialPrice: totalMaterialPrice,
       gst: gst,
       finalAmount: finalAmount,
-    });
+    };
 
-    // Try to post the data (uncomment this when ready to submit)
-    // try {
-    //   await axios.post(`/api/purchase/`, {
-    //     custname: data.custname,
-    //     phone: data.phone,
-    //     items: addToPurchase.map(product => ({
-    //       productName: product.name,
-    //       productId: product.id,
-    //       quantity: product.quantity,
-    //       price: product.price,
-    //       totalPrice: (product.price * (product.quantity || 0))
-    //     })),
-    //     totalMaterialPrice,
-    //     gst,
-    //     finalAmount,
-    //   });
-    //   setShowModal(false);
-    // } catch (error) {
-    //   console.error("Failed to submit purchase:", error);
-    // }
+    console.log({ payload });
+
+    router.post("/purchases", payload, {
+      async: true,
+      onSuccess: () => {
+        // TODO: Reset the Quantity and isInCart for all products
+        // Added Delay because Toast is kind of glitching...try to fix if possible
+        setTimeout(() => toast.success("Purchase Successfull"), 1000);
+      },
+    });
   }
 
   return (
     <>
-
       <div className="border-2 border-[#343E4E] rounded-md m-3">
         <header className="bg-gray-100 p-3 dark:bg-[#1F2937] text-gray-800 dark:text-gray-200 text-center text-3xl font-bold shadow-lg">
           Estimation
@@ -97,38 +87,65 @@ export default function PurchaseTable({ addToPurchase }) {
         <table className="w-full bg-white dark:bg-[#2D3748] shadow-lg">
           <thead className="bg-gray-800 dark:bg-[#1F2937] text-white">
             <tr>
-              <th className="px-6 py-3 border border-[#343E4E]">Product Name</th>
+              <th className="px-6 py-3 border border-[#343E4E]">
+                Product Name
+              </th>
               <th className="px-6 py-3 border border-[#343E4E]">Amount (₹)</th>
               <th className="px-6 py-3 border border-[#343E4E]">Quantity</th>
-              <th className="px-6 py-3 border border-[#343E4E]">Total Price (₹)</th>
+              <th className="px-6 py-3 border border-[#343E4E]">
+                Total Price (₹)
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-300 dark:divide-gray-700">
             {addToPurchase.map((product) => (
               <tr key={product.id} className="bg-white dark:bg-[#1F2937]">
-                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">{product.name}</td>
-                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">₹{parseFloat(product.price).toFixed(2)}</td>
-                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">{product.quantity || 0}</td>
-                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">₹{(product.price * (product.quantity || 0)).toFixed(2)}</td>
+                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">
+                  {product.name}
+                </td>
+                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">
+                  ₹{parseFloat(product.price).toFixed(2)}
+                </td>
+                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">
+                  {product.quantity || 0}
+                </td>
+                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">
+                  ₹{(product.price * (product.quantity || 0)).toFixed(2)}
+                </td>
               </tr>
             ))}
             <tr className="bg-gray-800 dark:bg-[#1F2937] text-white font-semibold">
-              <td colSpan="3" className="px-6 py-3 border border-[#343E4E] text-right">
+              <td
+                colSpan="3"
+                className="px-6 py-3 border border-[#343E4E] text-right"
+              >
                 Total Material Amount:
               </td>
-              <td className="px-6 py-3 border border-[#343E4E] text-right">₹{totalMaterialPrice.toFixed(2)}</td>
+              <td className="px-6 py-3 border border-[#343E4E] text-right">
+                ₹{totalMaterialPrice.toFixed(2)}
+              </td>
             </tr>
             <tr className="bg-gray-800 dark:bg-[#1F2937] text-white font-semibold">
-              <td colSpan="3" className="px-6 py-3 border border-[#343E4E] text-right">
+              <td
+                colSpan="3"
+                className="px-6 py-3 border border-[#343E4E] text-right"
+              >
                 GST (18%):
               </td>
-              <td className="px-6 py-3 border border-[#343E4E] text-right">₹{gst.toFixed(2)}</td>
+              <td className="px-6 py-3 border border-[#343E4E] text-right">
+                ₹{gst.toFixed(2)}
+              </td>
             </tr>
             <tr className="bg-green-900 dark:bg-green-700 text-white font-semibold">
-              <td colSpan="3" className="px-6 py-3 border border-[#343E4E] text-right">
+              <td
+                colSpan="3"
+                className="px-6 py-3 border border-[#343E4E] text-right"
+              >
                 Final Amount:
               </td>
-              <td className="px-6 py-3 text-right">₹{finalAmount.toFixed(2)}</td>
+              <td className="px-6 py-3 text-right">
+                ₹{finalAmount.toFixed(2)}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -190,7 +207,11 @@ export default function PurchaseTable({ addToPurchase }) {
               <SecondaryButton onClick={() => setShowModal(false)}>
                 Cancel
               </SecondaryButton>
-              <SecondaryButton type="button" onClick={handleConfirmPurchase} className="border border-[#343E4E]">
+              <SecondaryButton
+                type="button"
+                onClick={handleConfirmPurchase}
+                className="border border-[#343E4E]"
+              >
                 Confirm Purchase
               </SecondaryButton>
             </div>
@@ -200,7 +221,6 @@ export default function PurchaseTable({ addToPurchase }) {
     </>
   );
 }
-
 
 /*
 STRUCT 

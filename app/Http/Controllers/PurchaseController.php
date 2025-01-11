@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\Quantity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class PurchaseController extends Controller
@@ -28,26 +31,55 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'id' => 'required|numeric',
-            'stock' => 'required|numeric',
+            'customerName' => 'required|string|max:255',
+            'phoneNumber' => 'required|digits:10',
+            'finalAmount' => 'required|numeric|min:0',
+            'gst' => 'required|numeric|min:0',
+            'totalMaterialPrice' => 'required|numeric|min:0',
+            'items' => 'required|array|min:1',
+            'items.*.id' => 'required|integer|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
         ]);
 
-        $product = Product::find($data['id']);
+        foreach ($data["items"] as $item) {
+            $product = Product::find($item['id']);
+            if (!$product)
+                return Inertia::render('Purchase', ["success" => false, "message" => "Product Could not be Found"]);
+            if ($product->stock < $item['quantity'])
+                return Inertia::render('Purchase', ["success" => false, "message" => "Demanded Stock not available"]);
 
-        // TODO: Find Better way for Error handling
-        if (!$product)
-            return Inertia::render('Purchase', ["success" => false, "message" => "Product Could not be Found"]);
+            $product->stock -= $item['quantity'];
+            $product->save();
+        }
 
-        if ($product->stock < $data['stock'])
-            return Inertia::render('Purchase', ["success" => false, "message" => "Demanded Stock not available"]);
+        $customer = Customer::where('contact', $data['phoneNumber'])->first();
+        if (!$customer) {
+            $customer = new Customer;
+            $customer->name = $data['customerName'];
+            $customer->contact = $data['phoneNumber'];
+            $customer->save();
+        }
 
-        $product->stock -= $data['stock'];
-        $product->save();
+        $purchase = new Purchase;
+        $purchase->customer_id = $customer->id;
+        $purchase->total_material_price = $data['totalMaterialPrice'];
+        $purchase->gst = $data['gst'];
+        $purchase->final_amount = $data['finalAmount'];
+        $purchase->save();
 
 
-        $payload = [...($product->toArray()), "specs" => json_decode($product->specs)];
 
-        return Inertia::render('Purchase', ["success" => true, "message" => "Product has been successfully Purchased", "product" => $payload]);
+        $quantities = array_map(function ($d) use ($purchase) {
+            return [
+                'purchase_id' => $purchase->id,
+                'product_id' => $d['id'],
+                'quantity' => $d['quantity'],
+            ];
+        }, $data['items']);
+
+        Quantity::insert($quantities);
+
+        return Redirect::to("/dashboard");
     }
 
     /**

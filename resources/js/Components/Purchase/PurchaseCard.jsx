@@ -2,29 +2,45 @@ import useProductStore from "@/Store/useProductStore";
 import { useMemo } from "react";
 import { MdRemoveShoppingCart } from "react-icons/md";
 
-export default function PurchaseCard({ id, name, price, image, specs, stock, isInCart, quantity }) {
-  const { addProductToPurchase, removeFromPurchase, updateProduct } = useProductStore();
+export default function PurchaseCard({
+  id,
+  name,
+  price,
+  image,
+  specs,
+  stock,
+  isInCart,
+  quantity,
+}) {
+  const { addProductToPurchase, removeFromPurchase, updateProduct } =
+    useProductStore();
 
   const specsArray = useMemo(
-    () => (typeof specs === "string" ? specs.split(",").map((s) => s.trim()) : specs),
+    () =>
+      typeof specs === "string" ? specs.split(",").map((s) => s.trim()) : specs,
     [specs]
   );
 
   const incrementStock = () => {
     updateProduct(id, {
-      quantity: (quantity >= stock ? stock : quantity < 0 ? 0 : quantity + 1),
+      quantity: quantity >= stock ? stock : quantity < 0 ? 0 : quantity + 1,
     });
   };
 
   const decrementStock = () => {
     updateProduct(id, {
-      quantity: (quantity > 0 ? quantity - 1 : 0),
+      quantity: quantity > 0 ? quantity - 1 : 0,
     });
   };
 
   const handleQuantityChange = (e) => {
     updateProduct(id, {
-      quantity: (e.target.value > stock ? stock : e.target.value < 0 ? 0 : e.target.value),
+      quantity:
+        +e.target.value > stock
+          ? stock
+          : +e.target.value < 0
+          ? 0
+          : +e.target.value,
     });
   };
 

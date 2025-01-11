@@ -14,15 +14,15 @@ export default function Dashboard({ products: initialProducts }) {
 
   useEffect(() => {
     if (initialProducts) {
-      const newProducts = initialProducts.map(
-        (initProduct) =>
-          products.find((p) => initProduct.id === p.id) || {
-            ...initProduct,
-            isInCart: false,
-            quantity: 0
-          });
+      const newProducts = initialProducts.map((initProduct) => {
+        const prevProduct = products.find((p) => p.id === initProduct.id);
+        const isInCart = (prevProduct && prevProduct.isInCart) || false;
+        const quantity = (prevProduct && prevProduct.quantity) || 0;
 
-          // this allows only genuine differences to set as states and avoids re rendering of products prop
+        return { ...initProduct, isInCart, quantity };  
+      });
+
+      // this allows only genuine differences to set as states and avoids re rendering of products prop
       if (JSON.stringify(newProducts) !== JSON.stringify(products)) {
         setProducts(newProducts);
       }
@@ -57,7 +57,7 @@ export default function Dashboard({ products: initialProducts }) {
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-2 sm:p-4 xl:p-8">
           {products.map((product) => (
-            <ProductCard key={product.id+product.name} {...product} />
+            <ProductCard key={product.id + product.name} {...product} />
           ))}
         </div>
       </div>
