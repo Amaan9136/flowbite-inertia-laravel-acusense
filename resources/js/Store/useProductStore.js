@@ -6,7 +6,7 @@ const useProductStore = create((set) => ({
 
   addProduct: (product) =>
     set((state) => ({
-      products: [...state.products, { product, isInCart: false }],
+      products: [...state.products, product],
     })),
 
   removeProduct: (productId) =>
