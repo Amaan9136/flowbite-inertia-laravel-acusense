@@ -1,7 +1,7 @@
-import { useMemo } from "react";
-import { MdRemoveShoppingCart } from "react-icons/md";
 import { useForm } from "@inertiajs/react";
+import { useMemo } from "react";
 import toast from "react-hot-toast";
+import { MdRemoveShoppingCart } from "react-icons/md";
 
 import useProductStore from "@/Store/useProductStore";
 import SecondaryButton from "../SecondaryButton";
@@ -20,7 +20,7 @@ export default function PurchaseCard({
 
   const { data, setData, post, processing, reset } = useForm({
     id,
-    stock: 0,
+    stock: 1,
   });
 
   const specsArray = useMemo(
@@ -107,7 +107,7 @@ export default function PurchaseCard({
               </button>
               <input
                 type="number"
-                className="bg-transparent w-14 border-none"
+                className="bg-transparent w-14 border-none text-center"
                 value={data.stock}
                 onChange={changeStock}
               />
