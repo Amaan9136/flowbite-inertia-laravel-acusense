@@ -28,7 +28,7 @@ export default function PurchaseTable({ addToPurchase }) {
   const gst = calculatedGst;
   const finalAmount = finalAmt;
 
-  function validateForm(data, addToPurchase) {
+  function validateForm(data) {
     const errors = {};
 
     if (!data.custname.trim()) {
@@ -37,6 +37,10 @@ export default function PurchaseTable({ addToPurchase }) {
 
     if (!data.phone.trim()) {
       errors.phone = "Customer phone number is required.";
+    }
+
+    if (data.phone.length != 10) {
+      errors.phone = "Invalid number.";
     }
 
     const invalidQuant = addToPurchase.find((product) => product.quantity <= 0);
@@ -48,7 +52,7 @@ export default function PurchaseTable({ addToPurchase }) {
   }
 
   async function handleConfirmPurchase() {
-    const validationErrors = validateForm(data, addToPurchase);
+    const validationErrors = validateForm(data);
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -70,11 +74,30 @@ export default function PurchaseTable({ addToPurchase }) {
 
     router.post("/purchases", payload, {
       async: true,
+      preserveScroll: true,
       onSuccess: () => {
-        // TODO: Reset the Quantity and isInCart for all products
-        // Added Delay because Toast is kind of glitching...try to fix if possible
-        setTimeout(() => toast.success("Purchase Successfull"), 1000);
+        // you: TODO: Reset the Quantity and isInCart for all products
+        // me:
+        addToPurchase.forEach((product) => {
+          product.quantity = 0;
+          product.isInCart = false;
+        });
+
+        // jff lol:
+        // cleaning all not needed ig
+        setData({ custname: "", phone: "" });
+        setErrors({});
+
+        // you: Added delay because the toast is glitching...try to fix if possible  
+        /* me: re-rendering of the page to dashboard interrupts the display of the toast message. 
+        this is better i think... cuz 0.001 s works*/
+        // also tried ()=>toast as inline function it doesnt work 
+        setTimeout(() => toast.success("Purchase Successful"), 1);
       },
+      onError: (err) => {
+        console.error("Error:", err);
+        toast.error("Failed to complete the purchase.");
+      }
     });
   }
 

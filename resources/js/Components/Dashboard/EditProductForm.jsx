@@ -59,7 +59,10 @@ export default function EditProductForm({
         toast.success("Product has been successfully Updated!");
         setShowEditModal(false); // Close the modal on success
       },
-      onError: (errors) => setErrors(errors),
+      onError: (err) => {
+        console.error("Error:", err);
+        toast.error("Failed to edit this product.");
+      }
     });
   };
 

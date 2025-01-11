@@ -1,13 +1,13 @@
+import { router } from "@inertiajs/react";
 import { useMemo, useState } from "react";
 import { MdAddShoppingCart, MdRemoveShoppingCart } from "react-icons/md";
-import { router } from "@inertiajs/react";
 
 import useProductStore from "@/Store/useProductStore";
+import toast from "react-hot-toast";
 import ConfirmModal from "../ConfirmModel";
 import DangerButton from "../DangerButton";
 import SecondaryButton from "../SecondaryButton";
 import EditProductForm from "./EditProductForm";
-import toast from "react-hot-toast";
 
 export default function ProductCard({
   id,
@@ -42,6 +42,10 @@ export default function ProductCard({
         removeProduct(id);
         setShowDeleteModal(false);
       },
+      onError: (err) => {
+        console.error("Error:", err);
+        toast.error("Failed to delete this product.");
+      }
     });
   };
 

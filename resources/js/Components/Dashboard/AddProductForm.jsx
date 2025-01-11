@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useForm } from "@inertiajs/react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 import InputError from "@/Components/InputError";
@@ -57,7 +57,10 @@ export default function AddProductModal({ showAddModal, setShowAddModal }) {
         reset();
         setShowAddModal(false);
       },
-      onError: (errors) => setErrors(errors),
+      onError: (err) => {
+        console.error("Error:", err);
+        toast.error("Failed to add product.");
+      }
     });
   };
 
