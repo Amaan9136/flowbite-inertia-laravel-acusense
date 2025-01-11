@@ -23,8 +23,8 @@ const AuthSideBar = () => {
           >
             <span className="text-xl relative transform transition-transform duration-200 hover:scale-110">
               {<element.icon />}
-              {element.name === "Purchase" &&
-                products.filter((p) => p.isInCart).length != 0 && (
+              {element.name === "Purchases" &&
+                products.filter((p) => p.isInCart).length !== 0 && (
                   <span className="z-50 -top-3 -left-3 absolute inline-flex justify-center items-center size-4 text-xs font-bold text-white bg-red-500 rounded-full">
                     {products.filter((p) => p.isInCart).length}
                   </span>

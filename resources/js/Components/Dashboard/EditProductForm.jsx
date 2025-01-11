@@ -1,14 +1,20 @@
+import { useState } from "react";
+import { useForm } from "@inertiajs/react";
+import { toast } from "react-hot-toast";
+
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import useProductStore from "@/Store/useProductStore";
-import { useForm } from "@inertiajs/react";
-import { useState } from "react";
 import SecondaryButton from "../SecondaryButton";
 
-export default function EditProductForm({ showEditModal, setShowEditModal, productData }) {
+export default function EditProductForm({
+  showEditModal,
+  setShowEditModal,
+  productData,
+}) {
   const { updateProduct } = useProductStore();
   const [errors, setErrors] = useState({});
 
@@ -27,7 +33,7 @@ export default function EditProductForm({ showEditModal, setShowEditModal, produ
     if (!data.price) newErrors.price = "Price is required.";
     if (!data.stock) newErrors.stock = "Stock is required.";
     if (!data.specs.trim()) newErrors.specs = "Specifications are required.";
-    setErrors(newErrors); 
+    setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -44,13 +50,13 @@ export default function EditProductForm({ showEditModal, setShowEditModal, produ
       specs: data.specs.split(",").map((spec) => spec.trim()),
     };
 
-    // Update the product in the store directly instead of using PUT request
-    updateProduct(productData.id, parsedData);
-
     // Optionally make the PUT request if you need to update the server
-    put(`/api/products/${productData.id}`, {
+    put(`/products/${productData.id}`, {
       data: parsedData,
       onSuccess: () => {
+        // Update the product in the store directly instead of using PUT request
+        updateProduct(productData.id, parsedData);
+        toast("Product has been successfully Updated!");
         setShowEditModal(false); // Close the modal on success
       },
       onError: (errors) => setErrors(errors),
@@ -64,7 +70,11 @@ export default function EditProductForm({ showEditModal, setShowEditModal, produ
 
         {/* Product Name */}
         <div>
-          <InputLabel htmlFor="name" value="Product Name" className="dark:text-white" />
+          <InputLabel
+            htmlFor="name"
+            value="Product Name"
+            className="dark:text-white"
+          />
           <TextInput
             id="name"
             name="name"
@@ -78,7 +88,11 @@ export default function EditProductForm({ showEditModal, setShowEditModal, produ
 
         {/* Product Image */}
         <div>
-          <InputLabel htmlFor="image" value="Product Image URL (optional)" className="dark:text-white" />
+          <InputLabel
+            htmlFor="image"
+            value="Product Image URL (optional)"
+            className="dark:text-white"
+          />
           <TextInput
             id="image"
             name="image"
@@ -92,7 +106,11 @@ export default function EditProductForm({ showEditModal, setShowEditModal, produ
 
         {/* Price */}
         <div>
-          <InputLabel htmlFor="price" value="Price" className="dark:text-white" />
+          <InputLabel
+            htmlFor="price"
+            value="Price"
+            className="dark:text-white"
+          />
           <TextInput
             id="price"
             name="price"
@@ -100,7 +118,9 @@ export default function EditProductForm({ showEditModal, setShowEditModal, produ
             step="0.01"
             min="0"
             value={data.price}
-            onChange={(e) => setData("price", e.target.value ? parseFloat(e.target.value) : "")}
+            onChange={(e) =>
+              setData("price", e.target.value ? parseFloat(e.target.value) : "")
+            }
             className="mt-1 block w-full text-gray-900"
           />
           <InputError message={errors.price} />
@@ -108,7 +128,11 @@ export default function EditProductForm({ showEditModal, setShowEditModal, produ
 
         {/* Specifications */}
         <div>
-          <InputLabel htmlFor="specs" value="Specifications (comma-separated)" className="dark:text-white" />
+          <InputLabel
+            htmlFor="specs"
+            value="Specifications (comma-separated)"
+            className="dark:text-white"
+          />
           <TextInput
             id="specs"
             name="specs"
@@ -123,22 +147,32 @@ export default function EditProductForm({ showEditModal, setShowEditModal, produ
 
         {/* Stock */}
         <div>
-          <InputLabel htmlFor="stock" value="Stock" className="dark:text-white" />
+          <InputLabel
+            htmlFor="stock"
+            value="Stock"
+            className="dark:text-white"
+          />
           <TextInput
             id="stock"
             name="stock"
             type="number"
             min="0"
             value={data.stock}
-            onChange={(e) => setData("stock", e.target.value ? parseFloat(e.target.value) : "")}
+            onChange={(e) =>
+              setData("stock", e.target.value ? parseFloat(e.target.value) : "")
+            }
             className="mt-1 block w-full text-gray-900"
           />
           <InputError message={errors.stock} />
         </div>
 
         <div className="mt-4 flex justify-end space-x-4">
-          <SecondaryButton onClick={() => setShowEditModal(false)}>Close</SecondaryButton>
-          <PrimaryButton type="submit" className="border border-white">Save Changes</PrimaryButton>
+          <SecondaryButton onClick={() => setShowEditModal(false)}>
+            Close
+          </SecondaryButton>
+          <PrimaryButton type="submit" className="border border-white">
+            Save Changes
+          </PrimaryButton>
         </div>
       </form>
     </Modal>
