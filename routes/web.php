@@ -1,32 +1,16 @@
 <?php
 
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\RouteController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use App\Models\Product;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [RouteController::class, 'home']);
+Route::get('/dashboard', [RouteController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/contact', [RouteController::class, 'contact']);
 
-Route::get('/dashboard', function () {
-    $products = Product::all()->toArray();
-    $parsed_prducts = array_map(fn($p) => ([...$p, "specs" => json_decode($p['specs'])]), $products);
-    return Inertia::render('Dashboard', ["products" => $parsed_prducts]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::resource('/products', ProductController::class)->except(['index', 'create', 'show', 'edit'])->middleware(['auth', 'verified']);
 
-Route::get('/purchase', function () {
-    return Inertia::render('Purchase');
-})->name('purchase');
-
-Route::get('/contact', function () {
-    return Inertia::render('Contact');
-})->name('contact');
+Route::resource('/purchases', PurchaseController::class)->except(['create', 'show', 'edit', 'update', 'destroy'])->middleware(['auth', 'verified']);
 
 require __DIR__ . '/auth.php';
-require __DIR__ . '/api.php';

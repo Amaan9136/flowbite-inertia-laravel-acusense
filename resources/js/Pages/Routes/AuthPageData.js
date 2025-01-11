@@ -7,8 +7,8 @@ const NeedAuthPageData = [
     icon: RiBarChart2Line
   },
   {
-    name: "Purchase",
-    path: "/purchase",
+    name: "Purchases",
+    path: "/purchases",
     icon: RiShoppingCartLine
   },
   {

@@ -1,11 +1,13 @@
-import useProductStore from "@/Store/useProductStore";
-import axios from "axios";
 import { useMemo, useState } from "react";
 import { MdAddShoppingCart, MdRemoveShoppingCart } from "react-icons/md";
+import { router } from "@inertiajs/react";
+
+import useProductStore from "@/Store/useProductStore";
 import ConfirmModal from "../ConfirmModel";
 import DangerButton from "../DangerButton";
 import SecondaryButton from "../SecondaryButton";
 import EditProductForm from "./EditProductForm";
+import toast from "react-hot-toast";
 
 export default function ProductCard({
   id,
@@ -19,7 +21,7 @@ export default function ProductCard({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { removeProduct, addProductToPurchase, products, removeFromPurchase } =
+  const { removeProduct, addProductToPurchase, removeFromPurchase } =
     useProductStore();
 
   const specsArray = useMemo(
@@ -33,13 +35,14 @@ export default function ProductCard({
   };
 
   const handleDelete = async () => {
-    try {
-      await axios.delete(`/api/products/${id}`);
-      removeProduct(id);
-      setShowDeleteModal(false);
-    } catch (error) {
-      console.error("Failed to delete product:", error);
-    }
+    router.delete(`/products/${id}`, {
+      async: true,
+      onSuccess: () => {
+        toast.success("Product has been successfully Deleted");
+        removeProduct(id);
+        setShowDeleteModal(false);
+      },
+    });
   };
 
   const handleEditClick = () => {

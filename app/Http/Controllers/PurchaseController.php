@@ -3,13 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class PurchaseController extends Controller
 {
-    public function purchase(Request $request)
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return Inertia::render('Purchase');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create() {}
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
         $data = $request->validate([
             'id' => 'required|numeric',
@@ -26,7 +42,6 @@ class PurchaseController extends Controller
             return Inertia::render('Purchase', ["success" => false, "message" => "Demanded Stock not available"]);
 
         $product->stock -= $data['stock'];
-        Log::info($product);
         $product->save();
 
 
@@ -34,4 +49,24 @@ class PurchaseController extends Controller
 
         return Inertia::render('Purchase', ["success" => true, "message" => "Product has been successfully Purchased", "product" => $payload]);
     }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Purchase $purchase) {}
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Purchase $purchase) {}
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Purchase $purchase) {}
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Purchase $purchase) {}
 }
