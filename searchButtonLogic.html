@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Find Function</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .highlight {
+      background-color: yellow;
+      color: black;
+      font-weight: bold;
+    }
+
+    .search-container {
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 200px;
+    }
+
+    .search-button {
+      padding: 8px 12px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .search-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="search-container">
+    <input type="text" class="search-input" id="searchInput" placeholder="Enter search term..." />
+    <button class="search-button" onclick="findText()">Find</button>
+  </div>
+
+  <div id="content">
+    <p>This is a sample text for testing the find functionality. It allows you to search for words and highlight them in
+      this text.</p>
+    <p>Try searching for the word <strong>"text"</strong> to see the highlighting in action. The search feature is
+      implemented using JavaScript.</p>
+  </div>
+
+  <script>
+    function findText() {
+
+      clearHighlights();
+
+      const input = document.getElementById("searchInput").value.trim();
+      if (!input) return;
+
+      const content = document.getElementById("content");
+      const regex = new RegExp(`(${input})`, "gi");
+
+
+      content.innerHTML = content.innerHTML.replace(
+        regex,
+        '<span class="highlight">$1</span>'
+      );
+    }
+
+    function clearHighlights() {
+      const content = document.getElementById("content");
+
+      content.innerHTML = content.innerHTML.replace(/<span class="highlight">(.*?)<\/span>/gi, "$1");
+    }
+  </script>
+</body>
+
+</html>

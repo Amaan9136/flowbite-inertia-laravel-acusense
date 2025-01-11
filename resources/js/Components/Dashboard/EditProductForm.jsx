@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useForm } from "@inertiajs/react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 import InputError from "@/Components/InputError";
@@ -56,7 +56,7 @@ export default function EditProductForm({
       onSuccess: () => {
         // Update the product in the store directly instead of using PUT request
         updateProduct(productData.id, parsedData);
-        toast("Product has been successfully Updated!");
+        toast.success("Product has been successfully Updated!");
         setShowEditModal(false); // Close the modal on success
       },
       onError: (errors) => setErrors(errors),

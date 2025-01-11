@@ -1,12 +1,12 @@
-import { useState } from "react";
 import { router } from "@inertiajs/react";
+import { useState } from "react";
 
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
+import toast from "react-hot-toast";
 import Modal from "../Modal";
 import SecondaryButton from "../SecondaryButton";
-import toast from "react-hot-toast";
 
 export default function PurchaseTable({ addToPurchase }) {
   const [showModal, setShowModal] = useState(false);
