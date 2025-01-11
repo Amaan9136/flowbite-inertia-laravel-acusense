@@ -14,7 +14,15 @@ export default function Dashboard({ products: initialProducts }) {
 
   useEffect(() => {
     if (initialProducts)
-      setProducts(initialProducts.map((p) => ({ ...p, isInCart: false })));
+      setProducts(
+        initialProducts.map(
+          (initProduct) =>
+            products.find((p) => initProduct.id === p.id) || {
+              ...initProduct,
+              isInCart: false,
+            }
+        )
+      );
   }, [initialProducts, setProducts]);
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -45,7 +53,7 @@ export default function Dashboard({ products: initialProducts }) {
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-2 sm:p-4 xl:p-8">
           {products.map((product) => (
-            <ProductCard key={product.id + product.name} {...product} />
+            <ProductCard key={product.id} {...product} />
           ))}
         </div>
       </div>
