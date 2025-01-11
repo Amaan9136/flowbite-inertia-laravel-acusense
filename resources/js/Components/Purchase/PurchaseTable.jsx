@@ -1,82 +1,232 @@
-import useProductStore from "@/Store/useProductStore";
-import { useMemo } from "react";
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import TextInput from "@/Components/TextInput";
+import { useState } from "react";
+import Modal from "../Modal";
 import SecondaryButton from "../SecondaryButton";
 
 export default function PurchaseTable({ addToPurchase }) {
-  const { products } = useProductStore();
+  const [showModal, setShowModal] = useState(false);
+  const [data, setData] = useState({ custname: '', phone: '' });
+  const [errors, setErrors] = useState({ custname: '', phone: '' });
 
-  const { totalMaterialPrice, gst, finalAmount } = useMemo(() => {
-    let total = 0;
-    Object.keys(products).forEach((id) => {
-      const product = addToPurchase.find((p) => p.id === id);
-      if (product) {
-        total += product.price * products[id].quantity;
-      }
+  let total = 0;
+  let calculatedGst = 0;
+  let finalAmt = 0;
+
+  addToPurchase.forEach((product) => {
+    total += product.price * (product.quantity || 0);
+  });
+
+  calculatedGst = total * 0.18; // 18% GST
+  finalAmt = total + calculatedGst;
+
+  const totalMaterialPrice = total;
+  const gst = calculatedGst;
+  const finalAmount = finalAmt;
+
+  function validateForm(data, addToPurchase) {
+    const errors = {};
+
+    if (!data.custname.trim()) {
+      errors.custname = "Customer name is required.";
+    }
+
+    if (!data.phone.trim()) {
+      errors.phone = "Customer phone number is required.";
+    }
+
+    const invalidQuant = addToPurchase.find((product) => product.quantity <= 0);
+    if (invalidQuant) {
+      errors.quantity = "All Product quantity must be greater than 0.";
+    }
+
+    return Object.keys(errors).length > 0 ? errors : {};
+  }
+
+  async function handleConfirmPurchase() {
+    const validationErrors = validateForm(data, addToPurchase);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      const firstErrorField = Object.keys(validationErrors)[0];
+      document.getElementById(firstErrorField)?.focus();
+      return;
+    }
+
+    alert("check console")
+
+    console.log({
+      custname: data.custname,
+      phone: data.phone,
+      items: addToPurchase,
+      totalMaterialPrice: totalMaterialPrice,
+      gst: gst,
+      finalAmount: finalAmount,
     });
-    const calculatedGst = total * 0.18; // 18% GST
-    const finalAmt = total + calculatedGst;
 
-    return { totalMaterialPrice: total, gst: calculatedGst, finalAmount: finalAmt };
-  }, [products]);
-
-  function handleConfirmPurchase() {
-    // show the confirm model with the stuffs want to purchase
+    // Try to post the data (uncomment this when ready to submit)
+    // try {
+    //   await axios.post(`/api/purchase/`, {
+    //     custname: data.custname,
+    //     phone: data.phone,
+    //     items: addToPurchase.map(product => ({
+    //       productName: product.name,
+    //       productId: product.id,
+    //       quantity: product.quantity,
+    //       price: product.price,
+    //       totalPrice: (product.price * (product.quantity || 0))
+    //     })),
+    //     totalMaterialPrice,
+    //     gst,
+    //     finalAmount,
+    //   });
+    //   setShowModal(false);
+    // } catch (error) {
+    //   console.error("Failed to submit purchase:", error);
+    // }
   }
 
   return (
     <>
-      <header className="bg-gray-100 dark:bg-[#1F2937] text-gray-800 dark:text-gray-200 text-center text-3xl font-bold pb-1 mt-3 mb-2 rounded-lg">
-        Estimation
-      </header>
-      <table className="rounded-lg border-2 w-full bg-white dark:bg-[#2D3748]">
-        <thead className="bg-gray-800 dark:bg-[#1F2937] text-white">
-          <tr>
-            <th className="px-4 py-2 border text-sm">Product Name</th>
-            <th className="px-4 py-2 border text-sm">Amount (₹)</th>
-            <th className="px-4 py-2 border text-sm">Quantity</th>
-            <th className="px-4 py-2 border text-sm">Total Price (₹)</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-300 dark:divide-gray-700">
-          {addToPurchase.map((product) => (
-            <tr key={product.id} className="bg-white dark:bg-[#1F2937]">
-              <td className="px-4 py-2 border text-sm text-gray-800 dark:text-gray-200">{product.name}</td>
-              <td className="px-4 py-2 border text-sm text-gray-800 dark:text-gray-200">₹{parseFloat(product.price).toFixed(2)}</td>
-              <td className="px-4 py-2 border text-sm text-gray-800 dark:text-gray-200">
-                {products.find((p) => p.id === product.id)?.quantity || 0}
-              </td>
-              <td className="px-4 py-2 border text-sm text-gray-800 dark:text-gray-200">
-                ₹{(product.price * (products.find((p) => p.id === product.id)?.quantity || 0)).toFixed(2)}
-              </td>
+
+      <div className="border-2 border-[#343E4E] rounded-md m-3">
+        <header className="bg-gray-100 p-3 dark:bg-[#1F2937] text-gray-800 dark:text-gray-200 text-center text-3xl font-bold shadow-lg">
+          Estimation
+        </header>
+        <table className="w-full bg-white dark:bg-[#2D3748] shadow-lg">
+          <thead className="bg-gray-800 dark:bg-[#1F2937] text-white">
+            <tr>
+              <th className="px-6 py-3 border border-[#343E4E]">Product Name</th>
+              <th className="px-6 py-3 border border-[#343E4E]">Amount (₹)</th>
+              <th className="px-6 py-3 border border-[#343E4E]">Quantity</th>
+              <th className="px-6 py-3 border border-[#343E4E]">Total Price (₹)</th>
             </tr>
-          ))}
-          <tr className="bg-gray-800 dark:bg-[#1F2937] text-white font-semibold">
-            <td colSpan="3" className="px-4 py-2 border text-sm text-right">
-              Total Material Amount:
-            </td>
-            <td className="px-4 py-2 border text-sm text-right">₹{totalMaterialPrice.toFixed(2)}</td>
-          </tr>
-          <tr className="bg-gray-800 dark:bg-[#1F2937] text-white font-semibold">
-            <td colSpan="3" className="px-4 py-2 border text-sm text-right">
-              GST (18%):
-            </td>
-            <td className="px-4 py-2 border text-sm text-right">₹{gst.toFixed(2)}</td>
-          </tr>
-          <tr className="bg-green-900 dark:bg-green-700 text-white font-semibold">
-            <td colSpan="3" className="px-4 py-2 border text-sm text-right">
-              Final Amount:
-            </td>
-            <td className="px-4 py-2 border text-sm text-right">₹{finalAmount.toFixed(2)}</td>
-          </tr>
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-300 dark:divide-gray-700">
+            {addToPurchase.map((product) => (
+              <tr key={product.id} className="bg-white dark:bg-[#1F2937]">
+                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">{product.name}</td>
+                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">₹{parseFloat(product.price).toFixed(2)}</td>
+                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">{product.quantity || 0}</td>
+                <td className="px-6 py-4 border border-[#343E4E] text-gray-800 dark:text-gray-200">₹{(product.price * (product.quantity || 0)).toFixed(2)}</td>
+              </tr>
+            ))}
+            <tr className="bg-gray-800 dark:bg-[#1F2937] text-white font-semibold">
+              <td colSpan="3" className="px-6 py-3 border border-[#343E4E] text-right">
+                Total Material Amount:
+              </td>
+              <td className="px-6 py-3 border border-[#343E4E] text-right">₹{totalMaterialPrice.toFixed(2)}</td>
+            </tr>
+            <tr className="bg-gray-800 dark:bg-[#1F2937] text-white font-semibold">
+              <td colSpan="3" className="px-6 py-3 border border-[#343E4E] text-right">
+                GST (18%):
+              </td>
+              <td className="px-6 py-3 border border-[#343E4E] text-right">₹{gst.toFixed(2)}</td>
+            </tr>
+            <tr className="bg-green-900 dark:bg-green-700 text-white font-semibold">
+              <td colSpan="3" className="px-6 py-3 border border-[#343E4E] text-right">
+                Final Amount:
+              </td>
+              <td className="px-6 py-3 text-right">₹{finalAmount.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <SecondaryButton
-        className="mt-4 hover:opacity-[0.8]"
-        onClick={handleConfirmPurchase}
+        className="hover:opacity-[0.8] m-3 mt-0"
+        onClick={() => setShowModal(true)}
         type="button"
       >
-        Confirm Purchase
+        Purchase
       </SecondaryButton>
+
+      {/* Modal for Adding Customer Name and Phone */}
+      {showModal && (
+        <Modal show={showModal} onClose={() => setShowModal(false)}>
+          <form className="p-6 space-y-4">
+            <h2 className="text-xl font-semibold dark:text-white">
+              Customer Information
+            </h2>
+
+            {/* Customer Name */}
+            <div>
+              <InputLabel htmlFor="name" className="dark:text-white">
+                Customer Name
+              </InputLabel>
+              <TextInput
+                id="name"
+                name="custname"
+                type="text"
+                value={data.custname}
+                onChange={(e) => setData({ ...data, custname: e.target.value })}
+                className="mt-1 block w-full text-gray-900"
+              />
+              <InputError message={errors.custname} />
+            </div>
+
+            {/* Customer Phone */}
+            <div>
+              <InputLabel htmlFor="phone" className="dark:text-white">
+                Customer Phone
+              </InputLabel>
+              <TextInput
+                id="phone"
+                name="phone"
+                type="text"
+                value={data.phone}
+                onChange={(e) => setData({ ...data, phone: e.target.value })}
+                className="mt-1 block w-full text-gray-900"
+              />
+              <InputError message={errors.phone} />
+            </div>
+
+            <div className="text-red-600 text-sm mt-2">
+              <InputError message={errors.quantity} />
+            </div>
+
+            <div className="mt-4 flex justify-end space-x-4">
+              <SecondaryButton onClick={() => setShowModal(false)}>
+                Cancel
+              </SecondaryButton>
+              <SecondaryButton type="button" onClick={handleConfirmPurchase} className="border border-[#343E4E]">
+                Confirm Purchase
+              </SecondaryButton>
+            </div>
+          </form>
+        </Modal>
+      )}
     </>
   );
 }
+
+
+/*
+STRUCT 
+{
+  "custname": "Yasir",
+  "phone": "8080808080",
+  "items": [
+    {
+      "productName": "Product 1",
+      "productId": "1",
+      "quantity": 2,
+      "price": 150,
+      "totalPrice": 300
+    },
+    {
+      "productName": "Product 2",
+      "productId": "2",
+      "quantity": 1,
+      "price": 250,
+      "totalPrice": 250
+    }
+  ],
+  "totalMaterialPrice": 550,
+  "gst": 99,
+  "finalAmount": 649
+}
+
+
+*/

@@ -65,20 +65,20 @@ export default function PurchaseCard({ id, name, price, image, specs, stock, isI
             <button
               type="button"
               onClick={decrementStock}
-              className="px-3 py-1 text-xl"
+              className="px-2 py-1"
             >
               -
             </button>
             <input
               type="number"
-              className="bg-transparent w-8 border-none text-center"
+              className="bg-transparent w-14 border-none text-center"
               value={quantity}
               onChange={handleQuantityChange}
             />
             <button
               type="button"
               onClick={incrementStock}
-              className="px-3 py-1 text-xl"
+              className="px-2 py-1"
             >
               +
             </button>

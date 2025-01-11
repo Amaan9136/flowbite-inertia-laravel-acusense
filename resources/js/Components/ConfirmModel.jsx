@@ -6,21 +6,21 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import PrimaryButton from "./PrimaryButton";
 
 export default function ConfirmModal({
-  showDeleteModal,
-  setShowDeleteModal,
+  show,
+  setShow,
   handleFunction,
   buttonType,
   btnName,
   confirmMsg
 }) {
   return (
-    <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+    <Modal show={show} onClose={() => setShow(false)}>
       <div className="p-6 space-y-4">
         <p className="text-lg font-semibold">
           {confirmMsg}
         </p>
         <div className="mt-4 flex justify-end space-x-4">
-          <SecondaryButton onClick={() => setShowDeleteModal(false)}>
+          <SecondaryButton onClick={() => setShow(false)}>
             Close
           </SecondaryButton>
           {buttonType === "danger" ? (

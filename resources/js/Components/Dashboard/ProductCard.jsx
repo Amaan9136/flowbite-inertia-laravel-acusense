@@ -111,8 +111,8 @@ export default function ProductCard({
 
       {showDeleteModal && (
         <ConfirmModal
-          showDeleteModal={showDeleteModal}
-          setShowDeleteModal={setShowDeleteModal}
+          show={showDeleteModal}
+          setShow={setShowDeleteModal}
           handleFunction={handleDelete}
           btnName="Confirm Delete"
           buttonType="danger"
